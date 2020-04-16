@@ -415,5 +415,95 @@
             return OK;
         }
     ```
+5、静态链表的插入操作：
+    思路：为了辨明数组中哪些分量未被使用，解决办法是将所有未被使用过的及已被删除的分量用游标链成一个备用链表，每当进行插入时，便可以从备用链表上取得第一个结点作为待插入的新结点。
+    ```c
+        /*若备用空间链表非空，则返回分配的结点下标，否则返回0*/
+        int Malloc_SLL(StaticLinkList space) {
+            /*当前数组第一个元素的cur存的值，就是要返回的第一个备用空闲的下标*/
+            int i = space[0].cur;
+            if (space[0].cur) {
+                /*由于要拿出一个分量来使用了，所以我们就得把它的下一个分量用来做备用*/
+                space[0].cur = space[i].cur;
+            }
+            return i;
+        }
+    ```
+    插入实现代码：
+    ```c
+        /*在L中第i个元素之前插入新的数据元素e*/
+        Status ListInsert(StaticLinkList L, int i, ElemType e) {
+            int j, k, l;
+            /*注意k首先是最后一个元素的下标*/
+            k = MAX_SIZE - 1;
+            if (i < 1 || i > ListLength(L) + 1) {
+                return ERROR;
+            }
+            /*获取空闲分量的下标*/
+            j = Malloc_SSL(L);
+            if (j) {
+                /*将数据赋值给此分量的data*/
+                L[j].data = e;
+                /*找到第i个元素的位置*/
+                for (l = 1; l <= i - 1; l++) {
+                    k = L[k].cur;
+                }
+                /*把第i个元素之前的cur赋值给新元素的cur*/
+                L[j].cur = L[k].cur;
+                /*把新元素的下标赋值给第i个元素之前元素的cur*/
+                L[k].cur = j;
+                return OK;
+            }
+            return ERROR;
+        }
+    ```
+6、静态链表的删除操作：
+    思路：和前面一样，删除元素使，原来使需要释放结点的函数free()。现在也得自己实现它。
+    实现代码：
+    ```c
+        /*删除在L中第i个数据元素e*/
+        Status LsitDelete(StaticLinkList L, int i) {
+            int j, k;
+            if (i < 1 || i > ListLegth(L)) {
+                return ERROR;
+            }
+            k = MAX_SIZE - 1;
+            for (j = 1; j <= i - 1; j++) {
+                k = L[k].cur;
+            }
+            j = L[k].cur;
+            L[k].cur = L[j].cur;
+            Free_SSL(L, j);
+            return OK;
+        }
+        /*将下标为k的空闲结点回收到备用链表*/
+        void Free_SSL(StaticLinkList space, int k) {
+            /*把第一个元素cur值赋给要删除的分量cur*/
+            space[k].cur = space[0].cur;
+            /*把要删除的分量下标赋值给第一个元素的cur*/
+            space[0].cur = k;
+        }
+    ```
+7、静态链表的一些其他操作，比如ListLength()：
+```c
+    /*初始条件：静态链表L已存在。操作结果：返回L中数据元素个数*/
+    int ListLength(StaticLinkList L) {
+        int j = 0;
+        int i = L[MAX_SIZE - 1].cur;
+        while (i) {
+            i = L[i].cur;
+            j++;
+        }
+        return j;
+    }
+```
+8、静态链表的优缺点：
+    优点：
+        在插入和删除操作时，只需要修改游标，不需要移动元素，从而改进了在顺序存储结构中的插入和删除操作需要移动大量元素的缺点。
+    缺点：
+        没有解决连续存储分配带来的表长难以确定的问题；
+        失去了顺序存储结构随机存取的特性。
+9、循环链表：将单链表中的终端结点的指针端由空指针改为指向头结点，就使整个单链表形成一个环，这种头尾相接的单链表称为单循环链表，简称循环链表。
+10、
 ## 三、
         

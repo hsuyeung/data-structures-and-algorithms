@@ -51,12 +51,12 @@
             (a)顺序线性表的结构代码：
                 ```c
                     /*存储空间初始分配量*/
-                    #define MAXSIZE 20
+                    #define MAX_SIZE 20
                     /*ElemType类型根据实际情况而定，这里假设为int*/
                     typedef int ElemType;
                     typedef struct {
-                        /*数组存储数据元素，最大容量为MAXSIZE*/
-                        ElemType data[MAXSIZE];
+                        /*数组存储数据元素，最大容量为MAX_SIZE*/
+                        ElemType data[MAX_SIZE];
                         /*线性表当前长度*/
                         int length;
                     } SqList;
@@ -96,10 +96,10 @@
                 ```c
                     /*初始条件：顺序线性表L已存在,1 <= i <= ListLength(L)*/
                     /*操作结果：在L中第i个位置之前插入心得数据元素e，L的长度加1*/
-                    Status ListLength(SqList *L, int i, ElemType e){
+                    Status ListLength(SqList *L, int i, ElemType e) {
                         int k;
                         /*顺序线性表已满*/
-                        if (L->length == MAXSIZE) {
+                        if (L->length == MAX_SIZE) {
                             return ERROR;
                         }
                         /*当i不在范围内时*/
@@ -391,12 +391,12 @@
     ```c
         /*线性表的静态链表存储结构*/
         /*假设链表的最大长度为1000*/
-        #define MAXSIZE 1000
+        #define MAX_SIZE 1000
         typedef struct {
             ElemType data;
             /*游标，为0时表示无指向*/
             int cur;
-        } Component, StaticLinkList[MAXSIZE];
+        } Component, StaticLinkList[MAX_SIZE];
     ```
     另外对数组第一个和最后一个元素作为特殊元素处理，不存数据。
     通常把未被使用的数组元素称为备用链表。
@@ -407,11 +407,11 @@
         /*space[0].cur*为头指针，"0"表示空指针*/
         Status InitList(StaticLinkList space) {
             int i;
-            for (i = 0; i < MAXSIZE - 1; i++) {
+            for (i = 0; i < MAX_SIZE - 1; i++) {
                 space[i].cur = i + 1;
             }
             /*目前静态链表为空，最后一个元素的cur为0*/
-            space[MAXSIZE - 1].cur = 0;
+            space[MAX_SIZE - 1].cur = 0;
             return OK;
         }
     ```

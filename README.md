@@ -40,11 +40,11 @@
             其中，除第一个元素a1外，每一个元素有且只有一个直接前驱元素，除了最后一个元素an外，每一个元素有且只有一个直接后继元素。
             数据元素之间的关系是一对一的关系。
         Operation
-            InitList(*L)：初始化操作，建立一个空的线性表L。
+            InitList()：初始化操作，建立一个空的线性表L并返回。
             ListEmpty(L)：若线性表为空，返回true；否则返回false。
             ClearList(*L)：将线性表清空。
             GetElem(L, i, *e)：将线性表L中的第i个位置元素值返回给e。
-            LocationElem(L, e)：在线性表L中查找与给定元素值e相等的元素，如果查找成功，返回该元素在表中序号表示成功。
+            LocationElem(L, e)：在线性表L中查找与给定元素值e相等的元素，如果查找成功，返回该元素在表中序号表示成功，否则返回-1。
         end ADT
     2、线性表的两种物理结构：
         (1)顺序存储结构：用一段地址连续的存储单元依次存储线性表的数据元素。
@@ -54,7 +54,8 @@
                     #define MAX_SIZE 20
                     /*ElemType类型根据实际情况而定，这里假设为int*/
                     typedef int ElemType;
-                    typedef struct {
+                    typedef struct
+                    {
                         /*数组存储数据元素，最大容量为MAX_SIZE*/
                         ElemType data[MAX_SIZE];
                         /*线性表当前长度*/
@@ -78,8 +79,10 @@
                     typedef int Status;
                     /*初始条件：顺序线性表L已经存在，1 <= i <= ListLength(L)*/
                     /*操作结果：用e放回L中第i个数据元素的值*/
-                    Status GetElem(SqList L, int i, ElemType *e) {
-                        if (L.length == 0 || i < 1 || i > length) {
+                    Status GetElem(SqList L, int i, ElemType *e) 
+                    {
+                        if (L.length == 0 || i < 1 || i > L.length) 
+                        {
                             return ERROR;
                         }
                         *e = L.data[i - 1];
@@ -95,28 +98,32 @@
                 实现代码：
                 ```c
                     /*初始条件：顺序线性表L已存在,1 <= i <= ListLength(L)*/
-                    /*操作结果：在L中第i个位置之前插入心得数据元素e，L的长度加1*/
-                    Status ListLength(SqList *L, int i, ElemType e) {
+                    /*操作结果：在L中第i个位置之前插入新的数据元素e，L的长度加1*/
+                    Status ListInsert(SqList *L, int i, ElemType e) {
                         int k;
                         /*顺序线性表已满*/
-                        if (L->length == MAX_SIZE) {
+                        if (L->length == MAX_SIZE) 
+                        {
                             return ERROR;
                         }
                         /*当i不在范围内时*/
-                        if (i < 1 || i > L->length + 1) {
+                        if (i < 1 || i > L->length + 1) 
+                        {
                             return ERROR;
                         }
                         /*若插入数据位置不在表尾*/
-                        if (i <= L->length) {
+                        if (i <= L->length) 
+                        {
                             /*将要插入位置后数据元素向后移动一位*/
-                            for (k = L->length - 1; k >= i; k--) {
+                            for (k = L->length - 1; k >= i - 1; k--) 
+                            {
                                 L->data[k + 1] = L->data[k];
                             }
                         }
                         /*将新元素插入*/
-                            L->data[i - 1] = e;
-                            L->length++;
-                            return OK;
+                        L->data[i - 1] = e;
+                        L->length++;
+                        return OK;
                     }
                 ```
             (e)顺序线性表的删除(ListDelete)操作：
@@ -132,16 +139,19 @@
                     Status ListDelete(SqList *L, int i, ElemType *e) {
                         int k;
                         /*线性表为空*/
-                        if (L->length == 0) {
+                        if (L->length == 0) 
+                        {
                             return ERROR;
                         }
                         /*删除位置不合理*/
-                        if (i < 1 || i > L->length) {
-                            return OK;
+                        if (i < 1 || i > L->length) 
+                        {
+                            return ERROR;
                         }
                         *e = L->data[i - 1];
                         /*如果删除的不是最后一个位置*/
-                        if (i < L->length) {
+                        if (i < L->length) 
+                        {
                             /*将删除位置后继元素前移*/
                             for (k = i; k < L->length; k++) {
                                 L->data[k - 1] = L->data[k];
@@ -173,7 +183,8 @@
             (b)线性表的单链表存储结构代码描述：
             ```c
                 /*线性表的单链表存储结构*/
-                typedef struct Node {
+                typedef struct Node 
+                {
                     ElemType data;
                     struct Node *next;
                 } Node;
@@ -190,7 +201,8 @@
                 ```c
                     /*初始条件：顺序线性表L已存在，1 <= i <= ListLength(L)*/
                     /*操作结果：用e返回L中第i个数据元素的值*/
-                    Status GetElem(LinkList L, int i, ElemType *e) {
+                    Status GetElem(LinkList L, int i, ElemType *e) 
+                    {
                         int j;
                         /*声明一个指针p*/
                         LinkList p;
@@ -199,12 +211,14 @@
                         /*j为计数器*/
                         j = 1;
                         /*p不为空且计数器j还没有等于i时，循环继续*/
-                        while (p && j < i) {
+                        while (p && j < i) 
+                        {
                             p = p->next;
                             ++j;
                         }
                         /*第i个结点不存在*/
-                        if (!p || j > i) {
+                        if (!p || j > i) 
+                        {
                             return ERROR;
                         }
                         /*取第i个结点的数据*/
@@ -226,18 +240,21 @@
                 ```c
                     /*初始条件：顺序线性表L已存在，1 <= i <= ListLength(L)*/
                     /*操作结果：在L中第i个结点位置之前插入新的数据元素e，L长度加1*/
-                    Status ListInsert(LinkList *L, int i, ElemType e) {
+                    Status ListInsert(LinkList *L, int i, ElemType e) 
+                    {
                         int j;
                         LinkList p, s;
                         p = *L;
                         j = 1;
                         /*寻找第i - 1个结点*/
-                        while (p && j < i) {
+                        while (p && j < i) 
+                        {
                             p = p->next;
                             ++j;
                         }
                         /*第i个结点不存在*/
-                        if (!p || j > i) {
+                        if (!p || j > i) 
+                        {
                             return ERROR;
                         }
                         /*生成新结点*/
@@ -262,18 +279,21 @@
                 ```c
                     /*初始条件：顺序线性表L已存在，1 <= i <= ListLength(L)*/
                     /*操作结果：删除L的第i个结点，并用e返回其值，L的长度减1*/
-                    Status ListDelete(LinkList *L, int i, ElemType e) {
+                    Status ListDelete(LinkList *L, int i, ElemType e) 
+                    {
                         int j;
                         LinkList p, q;
                         p = *L;
                         j = 1;
                         /*遍历寻找第i-1个结点*/
-                        while (p->next && j < i) {
+                        while (p->next && j < i) 
+                        {
                             p = p->next;
                             ++j;
                         }
                         /*第i个结点不存在*/
-                        if (!(p->next) || j > i) {
+                        if (!(p->next) || j > i) 
+                        {
                             return ERROR;
                         }
                         q = p->next;
@@ -299,7 +319,8 @@
                 实现代码：
                 ```c
                     /*随机产生n个元素的值，建立带表头结点的线性单链表L(头插法)*/
-                    void CreateListHead(LinkList *L, int n) {
+                    void CreateListHead(LinkList *L, int n) 
+                    {
                         LinkList p;
                         int i;
                         /*初始化随机数种子*/
@@ -307,7 +328,8 @@
                         *L = (LinkList)malloc(sizeof(Node));
                         /*先建立一个带头结点的单链表*/
                         (*L)->next = NULL;
-                        for (i = 0; i < n; i++) {
+                        for (i = 0; i < n; i++) 
+                        {
                             /*生成新节点*/
                             p = (LinkList)malloc(sizeof(Node));
                             /*随机生成100以内的数字*/
@@ -320,7 +342,8 @@
                 ```
                 ```c
                     /*随机产生n个元素的值，建立带表头结点的线性单链表L(尾插法)*/
-                    void CreateListTail(LinkList *L, int n) {
+                    void CreateListTail(LinkList *L, int n) 
+                    {
                         LinkList p, r;
                         int i;
                         /*初始化随机数种子*/
@@ -329,7 +352,8 @@
                         *L = (LinkList)malloc(sizeof(Node));
                         /*r为指向尾部的结点*/
                         r = *L;
-                        for (i = 0; i < n; i++) {
+                        for (i = 0; i < n; i++) 
+                        {
                             /*生成新节点*/
                             p = (LinkList)malloc(sizeof(Node));
                             /*随机生成100以内的数字*/
@@ -354,12 +378,14 @@
                 实现代码：
                 ```c
                     /*初始条件：顺序线性表L已存在，操作结果：将L重置为空表*/
-                    Status ClearList(LinkList *L) {
+                    Status ClearList(LinkList *L) 
+                    {
                         LinkList p, q;
                         /*p指向第一个结点*/
                         p = (*L)->next;
                         /*没到表尾*/
-                        while (p) {
+                        while (p) 
+                        {
                             q = p->next;
                             free(p);
                             p = q;
@@ -392,7 +418,8 @@
         /*线性表的静态链表存储结构*/
         /*假设链表的最大长度为1000*/
         #define MAX_SIZE 1000
-        typedef struct {
+        typedef struct 
+        {
             ElemType data;
             /*游标，为0时表示无指向*/
             int cur;
@@ -405,9 +432,11 @@
     ```c
         /*将一维数组space中各分量链成一备用链表*/
         /*space[0].cur*为头指针，"0"表示空指针*/
-        Status InitList(StaticLinkList space) {
+        Status InitList(StaticLinkList space) 
+        {
             int i;
-            for (i = 0; i < MAX_SIZE - 1; i++) {
+            for (i = 0; i < MAX_SIZE - 1; i++) 
+            {
                 space[i].cur = i + 1;
             }
             /*目前静态链表为空，最后一个元素的cur为0*/
@@ -419,10 +448,12 @@
         思路：为了辨明数组中哪些分量未被使用，解决办法是将所有未被使用过的及已被删除的分量用游标链成一个备用链表，每当进行插入时，便可以从备用链表上取得第一个结点作为待插入的新结点。
         ```c
             /*若备用空间链表非空，则返回分配的结点下标，否则返回0*/
-            int Malloc_SLL(StaticLinkList space) {
+            int Malloc_SLL(StaticLinkList space) 
+            {
                 /*当前数组第一个元素的cur存的值，就是要返回的第一个备用空闲的下标*/
                 int i = space[0].cur;
-                if (space[0].cur) {
+                if (space[0].cur) 
+                {
                     /*由于要拿出一个分量来使用了，所以我们就得把它的下一个分量用来做备用*/
                     space[0].cur = space[i].cur;
                 }
@@ -432,20 +463,24 @@
         插入实现代码：
         ```c
             /*在L中第i个元素之前插入新的数据元素e*/
-            Status ListInsert(StaticLinkList L, int i, ElemType e) {
+            Status ListInsert(StaticLinkList L, int i, ElemType e) 
+            {
                 int j, k, l;
                 /*注意k首先是最后一个元素的下标*/
                 k = MAX_SIZE - 1;
-                if (i < 1 || i > ListLength(L) + 1) {
+                if (i < 1 || i > ListLength(L) + 1) 
+                {
                     return ERROR;
                 }
                 /*获取空闲分量的下标*/
                 j = Malloc_SSL(L);
-                if (j) {
+                if (j) 
+                {
                     /*将数据赋值给此分量的data*/
                     L[j].data = e;
                     /*找到第i个元素的位置*/
-                    for (l = 1; l <= i - 1; l++) {
+                    for (l = 1; l <= i - 1; l++) 
+                    {
                         k = L[k].cur;
                     }
                     /*把第i个元素之前的cur赋值给新元素的cur*/
@@ -462,13 +497,16 @@
         实现代码：
         ```c
             /*删除在L中第i个数据元素e*/
-            Status LsitDelete(StaticLinkList L, int i) {
+            Status LsitDelete(StaticLinkList L, int i) 
+            {
                 int j, k;
-                if (i < 1 || i > ListLegth(L)) {
+                if (i < 1 || i > ListLegth(L)) 
+                {
                     return ERROR;
                 }
                 k = MAX_SIZE - 1;
-                for (j = 1; j <= i - 1; j++) {
+                for (j = 1; j <= i - 1; j++) 
+                {
                     k = L[k].cur;
                 }
                 j = L[k].cur;
@@ -477,7 +515,8 @@
                 return OK;
             }
             /*将下标为k的空闲结点回收到备用链表*/
-            void Free_SSL(StaticLinkList space, int k) {
+            void Free_SSL(StaticLinkList space, int k) 
+            {
                 /*把第一个元素cur值赋给要删除的分量cur*/
                 space[k].cur = space[0].cur;
                 /*把要删除的分量下标赋值给第一个元素的cur*/
@@ -487,10 +526,12 @@
     7、静态链表的一些其他操作，比如ListLength()：
     ```c
         /*初始条件：静态链表L已存在。操作结果：返回L中数据元素个数*/
-        int ListLength(StaticLinkList L) {
+        int ListLength(StaticLinkList L) 
+        {
             int j = 0;
             int i = L[MAX_SIZE - 1].cur;
-            while (i) {
+            while (i) 
+            {
                 i = L[i].cur;
                 j++;
             }
@@ -521,7 +562,8 @@
     14、双向链表的存储结构:
     ```c
         /*线性表的双向链表存储结构*/
-        typedef struct DulNode {
+        typedef struct DulNode 
+        {
             ElemType data;
             /*直接前驱指针*/
             struct DulNode *prior;
@@ -571,7 +613,7 @@
             其中，除第一个元素a1外，每一个元素有且只有一个直接前驱元素，除了最后一个元素an外，每一个元素有且只有一个直接后继元素。
             数据元素之间的关系是一对一的关系。
         Operation
-            InitStack(*S)：初始化操作，建立一个空栈S。
+            InitStack()：初始化操作，建立并返回一个空栈S。
             DestroyStack(*S)：若栈存在，则销毁它。
             ClearStack(*S)：将栈清空。
             StackEmpty(S)：若栈为空，返回true，否则返回false。
@@ -585,7 +627,8 @@
     ```c
         /*SElemType类型根据实际情况而定，这里假设为int*/
         typedef int SElemType;
-        typedef struct {
+        typedef struct 
+        {
             SElemType data[MAX_SIZE];
             /*用于栈顶指针*/
             int top;

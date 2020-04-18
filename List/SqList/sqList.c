@@ -73,7 +73,10 @@ int main(void)
         printf("\n");
         printf("线性表长度为：%d\n", sqList.length);
     }
-    
+    //清空顺序线性表
+    ClearList(&sqList);
+    //判断顺序线性表是否为空
+    printf("线性表是否为空：%d\n", ListEmpty(sqList));
 
     return 0;
 }

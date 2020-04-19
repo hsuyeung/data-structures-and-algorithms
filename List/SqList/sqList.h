@@ -1,23 +1,11 @@
 /*顺序线性表的定义文件*/
+#include "../../common.h"
 #ifndef SQLIST
 #define SQLIST
 
 /*最大容量定义 start*/
 #define MAX_SIZE 20
 /*最大容量定义 end*/
-
-/*状态常量定义 start*/
-#define OK 1
-#define ERROR 0
-#define TRUE 1
-#define FALSE 0
-/*状态常量定义 end*/
-
-/*数据元素类型定义 start*/
-
-typedef int ElemType;
-
-/*数据元素类型定义 end*/
 
 /*顺序存储线性表结构定义 start*/
 

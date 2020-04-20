@@ -1,7 +1,7 @@
 /*单链表的定义文件*/
 #include "../../common.h"
-#ifndef LINKLIST
-#define LINKLIST
+#ifndef LINK_LIST
+#define LINK_LIST
 
 /*单链表的结构定义 start*/
 

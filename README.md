@@ -561,19 +561,19 @@
     14、双向链表的存储结构:
     ```c
         /*线性表的双向链表存储结构*/
-        typedef struct DulNode 
+        typedef struct DuLNode 
         {
             ElemType data;
             /*直接前驱指针*/
-            struct DulNode *prior;
+            struct DuLNode *prior;
             /*直接后继指针*/
-            struct DulNode *next;
-        } DulNode, *DulinkList;
+            struct DuLNode *next;
+        } DuLNode, *DulinkList;
     ```
     15、双向链表也有可以有循环链表。
     对于链表中的某一个结点p，它的后继的前驱、前驱的后继都是它自己：p->next->prior = p = p->prior->next。双向链表时单链表中扩展出来的结构，所以很多操作是相同的，比如求长度的ListLength，查找元素的GetElem，获得元素位置的LocationElem等，这些操作都只设计一个方向的指针即可，另一指针也不能提供任何帮助。但是双向链表再插入和删除时要麻烦一些，需要修改两个指针变量。
     16、双向链表的插入操作：并不复杂，但是顺序很重要，不能写反了！！
-    假设存储元素e的系欸按位s，现在要实现将结点s插入到结点p和p->next之间：
+    假设存储元素e的结点s，现在要实现将结点s插入到结点p和p->next之间：
     实现代码：
     ```c
         /*这四步的顺序千万不能换！*/

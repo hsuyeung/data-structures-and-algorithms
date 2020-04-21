@@ -12,7 +12,7 @@ typedef struct LNode
 } LNode;
 typedef LNode *LinkList;
 
-/*链表的结构定义 end*/
+/*单链表的结构定义 end*/
 
 /*单链表具有的操作声明 start*/
 

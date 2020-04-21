@@ -48,16 +48,16 @@ int main(void)
     int index = LocationElem(linkListHead, elem);
     if (index != -1)
     {
-        printf("元素%d在头结点创建的链表中存在。它是第%d个元素\n", elem, index);
+        printf("元素%d在头插法创建的链表中存在。它是第%d个元素\n", elem, index);
     }
     else
     {
-        printf("元素%d在头结点创建的链表中不存在。\n", elem);
+        printf("元素%d在头插法创建的链表中不存在。\n", elem);
     }
-    //在头结点创建的链表中第五个位置之前插入一个值为250的结点
+    //在头插法创建的链表中第五个位置之前插入一个值为250的结点
     if (ListInsert(&linkListHead, 5, 250) == OK)
     {
-        printf("插入元素成功，现在头结点创建的链表的数据为：\n");
+        printf("插入元素成功，现在头插法创建的链表的数据为：\n");
         p = linkListHead->next;
         while (p)
         {
@@ -70,7 +70,7 @@ int main(void)
     if (ListDelete(&linkListHead, 5, &elem) == OK)
     {
         printf("删除第5个结点的元素成功，该结点的值为：%d\n", elem);
-        printf("现在头结点创建的链表的数据为：\n");
+        printf("现在头插法创建的链表的数据为：\n");
         p = linkListHead->next;
         while (p)
         {
@@ -79,10 +79,8 @@ int main(void)
         }
         printf("\n");
     }
-    
-    
 
-    //将尾差法和头插法创建的单链表清空
+    //将尾插法和头插法创建的单链表清空
     if (ClearList(&linkListHead))
     {
         printf("清空头插法创建的链表成功：%d\n", ListEmpty(linkListHead));

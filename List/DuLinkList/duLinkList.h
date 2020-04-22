@@ -32,9 +32,9 @@ int ClearDuLinkList(DuLinkList *DL);
 int GetElem(DuLinkList DL, int i, ElemType *e);
 /*在双向链表L中查找与给定元素值e相等的元素，如果查找成功，返回该元素在表中序号表示成功，否则返回-1*/
 int LocationElem(DuLinkList DL, ElemType e);
-/*在L中第i个位置之前插入新的数据元素e，L的长度加1*/
+/*在L中第i个位置之前插入新的数据元素e，DL的长度加1*/
 int DuListInsert(DuLinkList *DL, int i, ElemType e);
-/*删除L的第i个数据元素，并用e返回其值，L的长度减1*/
+/*删除L的第i个数据元素，并用e返回其值，DL的长度减1*/
 int DuListDelete(DuLinkList *DL, int i, ElemType *e);
 
 /*双向链表具有的操作声明 end*/

@@ -1,5 +1,5 @@
 /* 双向链表很多操作和单链表是相同的，
- * 所以这里只实现一部分双向链表与单链表的操作
+ * 所以这里只实现一部分双向链表与单链表不同的操作
  * */
 #include "duLinkList.h"
 #include <stdio.h>
@@ -126,7 +126,7 @@ int ClearDuLinkList(DuLinkList *DL)
     return OK;
 }
 
-/*在L中第i个位置之前插入新的数据元素e，L的长度加1*/
+/*在L中第i个位置之前插入新的数据元素e，DL的长度加1*/
 int DuListInsert(DuLinkList *DL, int i, ElemType e)
 {
     int j = 1;
@@ -159,7 +159,7 @@ int DuListInsert(DuLinkList *DL, int i, ElemType e)
     return OK;
 }
 
-/*删除L的第i个数据元素，并用e返回其值，L的长度减1*/
+/*删除L的第i个数据元素，并用e返回其值，DL的长度减1*/
 int DuListDelete(DuLinkList *DL, int i, ElemType *e)
 {
     int j = 1;

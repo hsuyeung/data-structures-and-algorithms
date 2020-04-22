@@ -34,6 +34,14 @@ int main(void)
         showByPS(duCLinkListTail);
         showByNS(duCLinkListTail);
     }
+    //将尾插法创建的双向循环链表清空
+    if (ClearDuCLinkList(&duCLinkListTail))
+    {
+        printf("清空尾插法创建的双向循环链表成功：%d\n", DuCListEmpty(duCLinkListTail));
+    }
+    ClearDuCLinkList(&duCLinkListTail);
+    showByPS(duCLinkListTail);
+    showByNS(duCLinkListTail);
 
     return 0;
 }
@@ -130,7 +138,28 @@ int DuCListEmpty(DuCLinkList DCL)
 }
 
 /*将双向循环链表清空*/
-int ClearDuCLinkList(DuCLinkList *DCL);
+int ClearDuCLinkList(DuCLinkList *DCL)
+{
+    if (DuCListEmpty(*DCL))
+    {
+        printf("双向循环链表已经是空表了，不能再空了。\n");
+        return ERROR;
+    }
+    DuCLinkList p, q;
+    //p指向第一个结点
+    p = (*DCL)->next;
+    //一直循环到表尾
+    while (p != *DCL)
+    {
+        q = p->next;
+        free(p);
+        p = q;
+    }
+    //将头结点的指针域指向自己
+    (*DCL)->prior = *DCL;
+    (*DCL)->next = *DCL;
+    return OK;
+}
 
 /*在L中第i个位置之前插入新的数据元DC素e，DCL的长度加1*/
 int DuCListInsert(DuCLinkList *DCL, int i, ElemType e)

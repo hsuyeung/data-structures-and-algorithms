@@ -634,7 +634,173 @@
             int top;
         } SqStack;
     ```
-    5、
-    6、
+    5、栈的顺序存储结构的进栈操作：
+    ```c
+        Statuc Push(SqStack *S, SElemType e)
+        {
+            //如果栈已经满了
+            if (S->top == MAXSIZE - 1)
+            {
+                return ERROR;
+            }
+            //栈顶指针加一
+            S->top++;
+            //将新插入元素赋值给栈顶空间
+            S->data[S->top] = e;
+            return OK;
+        }
+    ```
+    时间复杂度O(1)。
+    6、栈的顺序存储结构的出栈操作：
+    ```c
+        Status Pop(SqStack *S, SElemType *e)
+        {
+            //如果是空栈
+            if (s->top == -1)
+            {
+                return ERROR;
+            }
+            //将要删除的栈顶元素赋值给e
+            *e = S->data[S->top];
+            //栈顶指针减一
+            S->top--;
+            return OK;
+        }
+    ```
+    时间复杂度O(1)。
+    7、两栈共享空间
+    做法：数组有两个端点，两个栈有两个栈底，让一个栈的栈底为数组的始端，即下标为0处，另一个栈为数组的末端，即下标为数组长度n-1处。这样，两个栈如果增加元素，就是两端点向中间延伸。
+    当top1 = -1， top2 = n-1的时候就是空栈，当top1 + 1 = top2的时候就是栈满。
+    结构代码：
+    ```c
+        /*两栈共享空间结构*/
+        typedef struct
+        {
+            SElemType data[MAX_SIZE];
+            //栈1栈顶指针
+            int top1;
+            //栈2栈顶指针
+            int top2;
+        } SqDoubleStack;
+    ```
+    8、两栈共享空间的push(入栈)操作：
+    思路：除了要插入元素值参数歪，还需要有一个判断是栈1还是栈2的栈号参数stackNumber。
+    实现代码：
+    ```c
+        /*插入元素e为新的栈顶元素*/
+        Status Push(SqDoubleStack *S, SElemType e, int stackNumber)
+        {
+            //栈已经满了，不能再push新元素了
+            if (S->top1 + 1 == S->top2)
+            {
+                return ERROR;
+            }
+            //如果是栈1有元素进栈
+            if (stackNumber == 1)
+            {
+                //若是栈1则先top1+1然后给数组元素赋值
+                S->data[++S->top1] = e;
+            }
+            //如果是栈2有元素进栈
+            else if (stackNumber == 2)
+            {
+                //若是栈2则先top2-1然后给数组元素赋值
+                S->data[--S->top2] = e;
+            }
+            return OK;
+        }
+    ```
+    9、两栈共享空间的pop(出栈)操作：
+    ```c
+        /*若栈不空，则删除S的栈顶元素，用e放回其值，并返回OK，否则返回ERROR*/
+        Status Pop(SqDoubleStack *S. SElemType *e, int stackNumber)
+        {
+            if (stackNumber == 1)
+            {
+                //栈1已经是空栈了
+                if (S->top1 == -1)
+                {
+                    return ERROR;
+                }
+                //将栈1的栈顶元素出栈
+                *e = S->data[S->top1--];
+            }
+            else if (stackNumber == 2)
+            {
+                //栈2已经是空栈了
+                if (S->top2 == MAXSIZE)
+                {
+                    return ERROR;
+                }
+                //将栈2的栈顶元素出栈
+                *e = S->data[S->top2++];
+            }
+            return OK;
+        }
+    ```
+    10、通常使用两栈共享空间这样的数据结构，通常都是当两个栈的空间需求有相反关系时，也就是一个栈在增长时另一个栈正在缩短的情况，就像买卖股票一样，你买入时，一定是有人卖出的。这样使用两栈共享空间存储方法才有比较大的意义。否则两个栈都在不停的增长，就很快会因栈满而溢出了。
+    11、栈的链式存储结构，又简称为链栈，在链栈中，头结点已经不需要了。
+    链栈的结构代码：
+    ```c
+        typedef struct StackNode
+        {
+            SElemType data;
+            struct StackNode *next;
+        } StackNode, *LinkStackPtr;
+
+        typedef struct LinkStack
+        {
+            LinkStackPtr top;
+            int count;
+        } LinkStack;
+        /*链栈的操作绝大部分都和单链表类似，只是在插入和删除上特殊一些*/
+    ```
+    12、链栈的进栈(push)操作：
+    假设元素值为e的新结点是s，top为栈顶指针。
+    实现代码：
+    ```c
+        /*插入元素为e的新的栈顶元素*/
+        Status Push(LinkStack *S, SElemType e)
+        {
+            LinkStackPtr s = (LinkStackPtr)malloc(sizeof(StackNode));
+            s->data = e;
+            //把当前的栈顶元素赋值给新结点的直接后继
+            s->next = S->top;
+            //将新结点s赋值给栈顶指针
+            S->top = s;
+            S->count++;
+            return OK;
+        }
+    ```
+    时间复杂度O(1)。
+    13、链栈的出栈(pop)操作：
+    思路：假设变量p用来存储要删除的栈顶结点，将栈顶指针下移一位，最后释放p即可。
+    实现代码：
+    ```c
+        /*若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK，否则返回ERROR*/
+        Status Pop(LinkStack *S, SElemType *e)
+        {
+            LinkStackPtr p;
+            //如果栈为空
+            if (StackEmpty(*S))
+            {
+                return ERROR;
+            }
+            *e = S->top->data;
+            //将栈顶结点赋值给p
+            p = S->top;
+            //使栈顶指针下移一位，指向后一结点
+            S->top = S->top->next;
+            //释放结点p
+            free(p);
+            S->count--;
+            return OK;
+        }
+    ```
+    时间复杂度O(1)。
+    14、栈的应用：递归。
+        (1)递归函数：把一个直接调用自己或通过一系列的调用语句间接地调用自己的函数，称作递归函数。
+        (2)每个递归定义必须至少有一个条件，满足时递归不再进行，即不再引用自身而是返回值退出。
+    15、
 ## 四、
         

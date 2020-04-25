@@ -851,7 +851,145 @@
             DeQueue(*Q, *e)：删除队列Q中队头元素，并用e返回其值。
             QueueLength(Q)：返回队列Q的元素个数。
         end ADT
-    18、
-    19、
-## 四、
+    18、循环队列的顺序存储结构
+        (1)把队列头尾相接的顺序存储结构称为循环队列。
+        (2)队列为空的条件为：rear == front；队列为满的条件为：(rear + 1) % QueueSize == front
+        (3)通用的计算队列长度公式为：
+            (rear - front + QueueSize) % Queue
+        (4)循环队列的顺序存储结构：
+        ```c
+            /*QElemType类型根据实际情况而定，这里假设为int*/
+            typedef int QElemType;
+            /*循环队列的顺序存储结构*/
+            typedef struct
+            {
+                QElemType data[MAX_SIZE];
+                //头指针
+                int front;
+                //尾指针，若队列不空，指向队列尾元素的下一个位置
+                int reat;
+            } SqQueue;
+        ```
+        (5)循环队列的初始化：
+        ```c
+            /*初始化一个空队列Q*/
+            Status InitQueue(SqQueue *Q)
+            {
+                Q->front = 0;
+                Q->rear = 0;
+                return OK;
+            }
+        ```
+        (6)循环队列求队列长度：
+        ```c
+            /*返回Q中的元素个数，也就是队列的当前长度*/
+            int QueueLength(SqQueue Q)
+            {
+                return (Q.rear - Q.front + MAX_SIZE) % MAX_SIZE;
+            }
+        ```
+        (7)循环队列的入队列操作：
+        ```c
+            /*若队列未满，则插入元素e为Q新的队尾元素*/
+            Status EnQueue(SqQueue *Q, QElemType e)
+            {
+                //队列满的判断
+                if ((Q->rear + 1) % MAX_SIZE == Q->front)
+                {
+                    return ERROR;
+                }
+                //将元素e赋值给队尾
+                Q->data[Q->rear] = e;
+                //rear指针向后移一位置，若到最后则转到数组头部
+                Q->rear = (Q->rear + 1) % MAX_SIZE;
+                return OK;
+            }
+        ```
+        (8)循环队列的出队列操作：
+        ```c
+            /*若队列不空，则删除Q中队头元素，用e返回其值*/
+            Status DeQueue(SqQueue *Q, QElemType *e)
+            {
+                //队列空的判断
+                if (Q->front == Q->rear)
+                {
+                    return ERROR;
+                }
+                //将队头元素赋值给e
+                *e = Q->data[Q->front];
+                //front指针向后移一位置，若到最后则转到数组头部
+                Q->front = (Q->front + 1) % MAX_SIZE;
+                return OK;
+            }
+    19、队列的链式存储结构
+        (1)队列的链式存储结构，其实就是线性表的单链表，只不过它只能尾进头出而已，简称为链队列。为了操作的方便，将队头指针指向链队列的头结点，而队尾指针指向终端结点。空队列时，front和rear都指向头结点。
+        (2)链队列的结构：
+        ```c
+            /*QElemType类型根据实际情况而定，这里假设为int*/
+            typedef int QElemType;
+            /*结点结构*/
+            typedef struct QNode
+            {
+                QElemType data;
+                struct QNode *next;
+            } QNode, *QueuePtr;
+            /*队列的链表结构*/
+            typedef struct
+            {
+                //队头指针
+                QueuePtr front;
+                //队尾指针
+                QueuePtr rear;
+            } LinkQueue;
+        ```
+        (3)链队列的入队操作：就是在链表尾部插入结点。
+        ```c
+            /*插入元素e为Q的新的队尾元素*/
+            Status EnQueue(LinkQueue *Q, QElemType e)
+            {
+                QueuePtr s = (QueuePtr)malloc(sizeof(QNode));
+                //存储分配失败
+                if (!s)
+                {
+                    exit(0);
+                }
+                s->data = e;
+                s->next = NULL;
+                //把拥有元素e新结点s赋值给原队尾结点的后继
+                Q->rear->next = s;
+                //把当前的s设置为队尾结点，rear指向s
+                Q->rear = s;
+                return OK;
+            }
+        ```
+        (4)链队列的出队操作
+            思路：出队操作时，就是头结点的后继结点出队，将头结点的后继改为它后面的结点，若链表除头结点外只剩一个元素时，则需将rear指向头结点。
+            实现代码：
+            ```c
+                /*若队列不空，删除Q的队头元素，用e返回其值，并返回OK，否则返回ERROR*/
+                Status DeQueue(LinkQueue *Q, QElemType *e)
+                {
+                    QueuePtr p;
+                    //如果是空队列
+                    if (Q->front == Q->rear)
+                    {
+                        return ERRROR;
+                    }
+                    //将欲删除的对头结点暂存给p
+                    p = Q->front->next;
+                    //将欲删除的队头结点的值赋值给e
+                    *e = p->data;
+                    //将原队头结点后继p->next赋值给头结点后继
+                    Q->front->next = p->next;
+                    //若对头是队尾，则删除后将rear指向头结点
+                    if (Q->rear == p)
+                    {
+                        Q->rear = Q->front;
+                    }
+                    free(p);
+                    return OK;
+                }
+            ```
+        (5)总的来说，在可以去欸的那个队列长度最大值的情况下，建议用循环队列，如果你无法预估队列的长度时，则用链队列。
+## 四、串
         

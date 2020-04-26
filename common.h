@@ -12,6 +12,7 @@
 /*数据元素类型定义 start*/
 
 typedef int ElemType;
+typedef int SElemType;
 
 /*数据元素类型定义 end*/
 

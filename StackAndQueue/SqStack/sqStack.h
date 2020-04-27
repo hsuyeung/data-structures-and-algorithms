@@ -1,7 +1,7 @@
 /*顺序栈的定义文件*/
 #include "../../common.h"
-#ifndef SQSTACK
-#define SQSTACK
+#ifndef SQ_STACK
+#define SQ_STACK
 
 /*最大容量定义 start*/
 #define MAX_SIZE 20
@@ -22,9 +22,6 @@ typedef struct
 
 /*初始化操作，建立并返回一个空栈S*/
 SqStack InitStack();
-
-/*若栈存在，则销毁它*/
-int DestroyStack(SqStack *S);
 
 /*将栈清空*/
 void ClearStack(SqStack *S);

@@ -13,6 +13,7 @@
 
 typedef int ElemType;
 typedef int SElemType;
+typedef int QElemType;
 
 /*数据元素类型定义 end*/
 

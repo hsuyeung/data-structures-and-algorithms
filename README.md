@@ -992,4 +992,131 @@
             ```
         (5)总的来说，在可以确定那个队列长度最大值的情况下，建议用循环队列，如果你无法预估队列的长度时，则用链队列。
 ## 四、串
-        
+    1、串(string)是由零个或多个字符组成的有限序列，又名叫字符串。
+        零个字符的串称为空串(null string),长度为零。所谓的序列，说明串的相邻字符之间具有前驱和后继的关系。
+    2、对于两个串不相等时的大小判定：
+        给定两个串：s = "a1a2...an"，t = "b1b2...bm",当满足以下条件之一时，s<t。
+        (1)n < m，且ai = bi(i = 1, 2, ..., n)
+        (2)存在某个k <= min(m, n)，使得ai = bi(i = 1, 2, ..., k-1)，ak < bk。
+    3、串的抽象数据类型
+        ADT 串(string)
+        Data
+            串中元素仅由一个字符组成，相邻元素具有前驱和后继关系。
+        Operation
+            StrAssign(T, *chars)：生成一个其值等于字符串常量chars的串T。
+            StrCopy(T, S)：串S存在，由串S复制得串T。
+            ClearString(S)：串S存在，将串清空。
+            StringEmpty(S)：若串S为空，返回true，否则返回false。
+            StrLength(S)：返回串S的元素个数，即串的长度。
+            StrCompare(S, T)：若S > T，返回值>0，若S = T，返回0，若S < T，返回值<0。
+            Concat(T, S1, S2)：用T返回由S1和S2联接而成的新串。
+            SubString(Sub, S, pos, len)：串S存在，1<=pos<=StrLength(S)，且0<=len<=StrLength(S)-pos+1，用Sub返回串S的第pos个字符起长度为len的子串。
+            Index(S, T, pos)：串S和T存在，T是非空串，1<=pos<=StrLength(S)。若主串S中存在和串T值相同的子串，则返回它在主串S中第pos个字符之后第一次出现的位置，否则返回0。
+            Replace(S, T, V)：串S、T和V存在，T是非空串。用V替换主串S中出现的所有与T相等的不重叠的子串。
+            StrInsert(S, pos, T)：串S和T存在，1<=pos<=StrLength(S)+1。在串S的第pos个字符之前插入串T。
+            StrDelete(S, pos, len)：串S存在。1<=pos<=StrLength(S)-len+1。从串S中删除第pos个字符起长度为len的子串。
+        end ADT
+    4、Index的实现算法(暴力匹配)：
+        ```c
+            /*若T为非空串。若主串S中第pos个字符之后存在与T相等的子串，则返回第一个这样的子串在S中的位置，否则返回0*/
+            int Index(String S, String T, int pos)
+            {
+                int n, m , i;
+                String sub;
+                if (pos > 0)
+                {
+                    //得到主串S的长度
+                    n = StrLength(S);
+                    //得到子串T的长度
+                    m = StrLength(T);
+                    i = pos;
+                    while (i <= n - m + 1)
+                    {
+                        //取主串第i个位置长度与T相等的子串给sub
+                        SubString(sub, S, i, m);
+                        //如果两串不相等
+                        if (StrCompare(sub, T) != 0)
+                        {
+                            i++;
+                        }
+                        //如果两串相等，则返回i值
+                        else
+                        {
+                            return i;
+                        }
+                    }
+                }
+                //若无子串与T相等，返回0
+                return 0;
+            }
+        ```
+    5、串的顺序存储结构：直接看实现代码。
+    6、串的链式存储结构：串的链式存储结构相对顺序存储结构来说不够灵活，性能也不如顺序存储结构好。
+    7、朴素的模式匹配算法
+        前面已经用串的其他操作实现了模式匹配的算法Index。现在考虑不用串的其他操作，而是只用基本的数组来实现同样的算法。注意，我们假设主串S和压迫匹配的子串T的长度存在S[0]和T[0]中。实现代码如下：
+        ```c
+            /*返回子串T在主串S中第pos个字符之后的位置。若不存在，则函数返回值为0*/
+            /*T非空，1<=pos<=StrLength(S)。*/
+            int Index(String S, String T, int pos)
+            {
+                //i用于主串S中当前位置下标，若pos不为1，则从pos位置开始匹配
+                int i = pos;
+                //j用于子串T中当前位置的下标值
+                int j = 1;
+                //若i小于等于S长度且j小于等于T的长度时循环
+                while (i <= S[0] && j <= T[0])
+                {
+                    //两字母相等则继续
+                    if (S[i] == T[i])
+                    {
+                        i++;
+                        j++;
+                    }
+                    //指针后退重新开始匹配
+                    else
+                    {
+                        //i退回到上次匹配首位的下一位
+                        i = i - j + 2;
+                        //j退回到子串T的首位
+                        j = 1;
+                    }
+                }
+                if (j > T[0])
+                {
+                    return i - T[0];
+                }
+                else
+                {
+                    return 0;
+                }
+            }
+        ```
+    8、KMP模式匹配算法
+    ```c
+        /*通过计算返回子串T的next数组。*/
+        void get_next(String T, int *next)
+        {
+            int i, j;
+            i = 1;
+            j = 0;
+            next[1] = 0;
+            //此处T[0]表示串T的长度
+            while (i < T[0])
+            {
+                //T[i]表示后缀的单个字符
+                //T[j]表示前缀的单个字符
+                if (j == 0 || T[i] == T[j])
+                {
+                    i++;
+                    j++;
+                    next[i] = j;
+                }
+                else
+                {
+                    //若字符不相同，则j值回溯
+                    j = next[j];
+                }  
+            }
+        }
+    ```
+    9、

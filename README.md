@@ -1099,6 +1099,7 @@
             int i, j;
             i = 1;
             j = 0;
+            //注意：next[0]不存任何元素，当然也可以用来存长度
             next[1] = 0;
             //此处T[0]表示串T的长度
             while (i < T[0])
@@ -1118,5 +1119,79 @@
                 }  
             }
         }
+        /*返回子串T在主串S中第pos个字符之后的位置。若不存在，则函数返回值为0。*/
+        /*T非空，1<=pos<=StrLength(S)*/
+        int Index_KMP(String S, String T, int pos)
+        {
+            //i用于主串S当前位置下标值，若pos不为1，则从pos位置开始匹配
+            int i = pos;
+            //j用于子串T中当前位置下标值
+            int j = 1;
+            //定义一个next数组
+            int next[255];
+            //对T作分析，得到next数组
+            get_next(T, next);
+            //若i小于S的长度且j小于T的长度时，循环继续
+            while (i <= S[0] && j <= T[0])
+            {
+                //两字母相等则继续判断，与朴素算法相比增加了一个j==0的判断
+                if (j == 0 || S[i] == T[j])
+                {
+                    i++;
+                    j++;
+                }
+                //不相等则指针后退重新开始匹配
+                else
+                {
+                    //j退回到合适的位置，i值不变
+                    j = next[j];
+                }
+            }
+            if (j > T[0])
+            {
+                return i - T[0];
+            }
+            else
+            {
+                return 0;
+            }
+        }
     ```
-    9、
+    注意：KMP算法仅当模式与主串之间存在许多“部分匹配”的情况下才体现出他的优势，否则两者差异并不明显。
+    9、KMP模式匹配算法改进：将get_next函数进行改良，使用nextval来取代next
+    改进代码：
+    ```c
+        /*求模式串T的next函数修正值并存入数组nextval*/
+        void get_nextval(String T, int *nextval)
+        {
+            int i, j;
+            i = 1;
+            j = 0;
+            nextval[1] = 0;
+            while (i < T[0])
+            {
+                if (j == 0 || T[i] == T[j])
+                {
+                    i++;
+                    j++;
+                    //若当前字符与前缀字符不同，则当前的j为nextval在i位置的值
+                    if (T[i] != T[j])
+                    {
+                        nextval[i] = j;
+                    }
+                    //如果与前缀字符相同，则将前缀字符的nextval值赋给nextval在i位置的值
+                    else
+                    {
+                        nextval[i] = nextval[j];
+                    }
+                }
+                else
+                {
+                    j = nextval[j];
+                }
+            }
+        }
+        实际匹配算法就只需要将"get_next(T, next);"改为"get_nextval(T, next);"即可。
+        总结改进过的KMP算法，它是在计算出next值得同时，如果a位字符与它的next值指向的b位字符相等，则将该a位的nextval就指向b位的nextval值，如果不等，则该a位得nextval值就是它自己a位得next的值。
+    ```
+## 五、树

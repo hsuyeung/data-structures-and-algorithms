@@ -1,10 +1,12 @@
 /*字符串的定义文件*/
-#include "../common.h"
-#ifndef STRING
-#define STRING
+#include "../../common.h"
+#ifndef MY_STRING
+#define MY_STRING
 
 /*最大容量定义 start*/
-#define MAX_SIZE 40
+//因为零号元素用来存储长度，所以实际存储的字符长度会-1
+//这里值字符串长度最大为9，1为存储字符串长度的第零号元素
+#define MAX_SIZE (200 + 1)
 /*最大容量定义 end*/
 
 /*字符串的顺序结构定义 start*/

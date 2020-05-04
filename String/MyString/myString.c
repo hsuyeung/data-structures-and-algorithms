@@ -66,6 +66,7 @@ int main(void)
     {
         printf("子串s2为: ");
         StrPrint(s2);
+        printf("串s2的长度为：%d\n", StrLength(s2));
     }
     //删除子串
     printf("从串t的第pos个字符起,删除len个字符，请输入pos,len：");
@@ -73,11 +74,13 @@ int main(void)
     StrDelete(t, i, j);
     printf("删除后的串t为：");
     StrPrint(t);
+    printf("串t的长度为：%d\n", StrLength(t));
     //插入子串
     i = StrLength(s2) / 2;
     StrInsert(s2, i, t);
     printf("在串s2的第%d个字符之前插入串t后,串s2为：\n", i);
     StrPrint(s2);
+    printf("串s2的长度为：%d\n", StrLength(s2));
     //子串匹配
     printf("串t为：");
 	StrPrint(t);
@@ -101,9 +104,9 @@ int main(void)
 int StrAssign(String T, char *chars)
 {
     int i;
-    if (strlen(chars) > MAX_SIZE)
+    if (strlen(chars) >= MAX_SIZE)
     {
-        printf("串长超过MAXSIZE(=%d)\n", MAX_SIZE);
+        printf("串长超过MAXSIZE(=%d)\n", MAX_SIZE - 1);
         return ERROR;
     }
     else
@@ -122,7 +125,7 @@ int StrCopy(String T, String S)
 {
     int i;
     //如果S串长度大于了T串的最大容量则截断
-    T[0] = S[0] > MAX_SIZE ? MAX_SIZE : S[0];
+    T[0] = S[0] >= MAX_SIZE ? MAX_SIZE - 1 : S[0];
     for (i = 1; i <= S[0]; i++)
     {
         T[i] = S[i];
@@ -169,7 +172,7 @@ int Concat(String T, String S1, String S2)
 {
     int i;
     //未截断
-    if (S1[0] + S2[0] <= MAX_SIZE)
+    if (S1[0] + S2[0] < MAX_SIZE)
     {
         for (i = 1; i <= S1[0]; i++)
         {
@@ -189,11 +192,11 @@ int Concat(String T, String S1, String S2)
         {
             T[i] = S1[i];
         }
-        for (i = 1; i <= MAX_SIZE - S1[0]; i++)
+        for (i = 1; i < MAX_SIZE - S1[0]; i++)
         {
             T[S1[0] + i] = S2[i];
         }
-        T[0] = MAX_SIZE;
+        T[0] = MAX_SIZE - 1;
         return FALSE;
     }
 }
@@ -299,7 +302,7 @@ int StrInsert(String S, int pos, String T)
         return ERROR;
     }
     //完全插入
-    if (S[0] + T[0] <= MAX_SIZE)
+    if (S[0] + T[0] < MAX_SIZE)
     {
         for (i = S[0]; i >= pos; i--)
         {
@@ -315,11 +318,7 @@ int StrInsert(String S, int pos, String T)
     //部分插入
     else
     {
-        //
-        //这里的i <= pos有带商榷，等测试
-        //
-        //
-        for (i = MAX_SIZE; i <= pos; i--)
+        for (i = MAX_SIZE - 1; i > pos + T[0] - 1; i--)
         {
             S[i] = S[i - T[0]];
         }
@@ -327,7 +326,7 @@ int StrInsert(String S, int pos, String T)
         {
             S[i] = T[i - pos + 1];
         }
-        S[0] = MAX_SIZE;
+        S[0] = MAX_SIZE - 1;
         return FALSE;
     }
 }
@@ -339,7 +338,7 @@ int StrDelete(String S, int pos, int len)
     int i;
     if (pos < 1 || pos > S[0] - len + 1 || len < 0)
     {
-        printf("删除位值不合理。\n");
+        printf("删除位置不合理。\n");
         return ERROR;
     }
     for (i = pos + len; i <= S[0]; i++)

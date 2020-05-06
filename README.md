@@ -50,15 +50,15 @@
         (1)顺序存储结构：用一段地址连续的存储单元依次存储线性表的数据元素。
             (a)顺序线性表的结构代码：
                 ```c
-                    /*存储空间初始分配量*/
+                    /* 存储空间初始分配量 */
                     #define MAX_SIZE 20
-                    /*ElemType类型根据实际情况而定，这里假设为int*/
+                    /* ElemType类型根据实际情况而定，这里假设为int */
                     typedef int ElemType;
                     typedef struct
                     {
-                        /*数组存储数据元素，最大容量为MAX_SIZE*/
+                        /* 数组存储数据元素，最大容量为MAX_SIZE */
                         ElemType data[MAX_SIZE];
-                        /*线性表当前长度*/
+                        /* 线性表当前长度 */
                         int length;
                     } SqList;
                 ```
@@ -75,10 +75,10 @@
                     #define ERROR 0
                     #define TRUE 1
                     #define FALSE 0
-                    /*Status是函数的类型，其值是函数结果状态代码，如OK等*/
+                    /* Status是函数的类型，其值是函数结果状态代码，如OK等 */
                     typedef int Status;
-                    /*初始条件：顺序线性表L已经存在，1 <= i <= ListLength(L)*/
-                    /*操作结果：用e放回L中第i个数据元素的值*/
+                    /* 初始条件：顺序线性表L已经存在，1 <= i <= ListLength(L) */
+                    /* 操作结果：用e放回L中第i个数据元素的值 */
                     Status GetElem(SqList L, int i, ElemType *e) 
                     {
                         if (L.length == 0 || i < 1 || i > L.length) 
@@ -97,30 +97,30 @@
                     将要插入元素填入位置i处；线性表长度+1。
                 实现代码：
                 ```c
-                    /*初始条件：顺序线性表L已存在,1 <= i <= ListLength(L)*/
-                    /*操作结果：在L中第i个位置之前插入新的数据元素e，L的长度加1*/
+                    /* 初始条件：顺序线性表L已存在,1 <= i <= ListLength(L) */
+                    /* 操作结果：在L中第i个位置之前插入新的数据元素e，L的长度加1 */
                     Status ListInsert(SqList *L, int i, ElemType e) {
                         int k;
-                        /*顺序线性表已满*/
+                        /* 顺序线性表已满 */
                         if (L->length == MAX_SIZE) 
                         {
                             return ERROR;
                         }
-                        /*当i不在范围内时*/
+                        /* 当i不在范围内时 */
                         if (i < 1 || i > L->length + 1) 
                         {
                             return ERROR;
                         }
-                        /*若插入数据位置不在表尾*/
+                        /* 若插入数据位置不在表尾 */
                         if (i <= L->length) 
                         {
-                            /*将要插入位置后数据元素向后移动一位*/
+                            /* 将要插入位置后数据元素向后移动一位 */
                             for (k = L->length - 1; k >= i - 1; k--) 
                             {
                                 L->data[k + 1] = L->data[k];
                             }
                         }
-                        /*将新元素插入*/
+                        /* 将新元素插入 */
                         L->data[i - 1] = e;
                         L->length++;
                         return OK;
@@ -134,25 +134,25 @@
                     表长减一。
                 实现代码：
                 ```c
-                    /*初始条件：顺序线性表L已存在,1 <= i <= ListLength(L)*/
-                    /*操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1*/
+                    /* 初始条件：顺序线性表L已存在,1 <= i <= ListLength(L) */
+                    /* 操作结果：删除L的第i个数据元素，并用e返回其值，L的长度减1 */
                     Status ListDelete(SqList *L, int i, ElemType *e) {
                         int k;
-                        /*线性表为空*/
+                        /* 线性表为空 */
                         if (L->length == 0) 
                         {
                             return ERROR;
                         }
-                        /*删除位置不合理*/
+                        /* 删除位置不合理 */
                         if (i < 1 || i > L->length) 
                         {
                             return ERROR;
                         }
                         *e = L->data[i - 1];
-                        /*如果删除的不是最后一个位置*/
+                        /* 如果删除的不是最后一个位置 */
                         if (i < L->length) 
                         {
-                            /*将删除位置后继元素前移*/
+                            /* 将删除位置后继元素前移 */
                             for (k = i; k < L->length; k++) {
                                 L->data[k - 1] = L->data[k];
                             }
@@ -182,13 +182,13 @@
                     头结点不一定是链表必须要素。
             (b)线性表的单链表存储结构代码描述：
             ```c
-                /*线性表的单链表存储结构*/
+                /* 线性表的单链表存储结构 */
                 typedef struct Node 
                 {
                     ElemType data;
                     struct Node *next;
                 } Node;
-                /*定义LinkList*/
+                /* 定义LinkList */
                 typedef struct Node* LinkList;
             ```
             (c)单链表的读取：
@@ -199,29 +199,29 @@
                     若查找成功，返回结点p的数据。
                 实现代码：
                 ```c
-                    /*初始条件：顺序线性表L已存在，1 <= i <= ListLength(L)*/
-                    /*操作结果：用e返回L中第i个数据元素的值*/
+                    /* 初始条件：顺序线性表L已存在，1 <= i <= ListLength(L) */
+                    /* 操作结果：用e返回L中第i个数据元素的值 */
                     Status GetElem(LinkList L, int i, ElemType *e) 
                     {
                         int j;
-                        /*声明一个指针p*/
+                        /* 声明一个指针p */
                         LinkList p;
-                        /*让p指向链表L的第一个结点，因为假设L是带头结点的，所以L->next才是第一个结点*/
+                        /* 让p指向链表L的第一个结点，因为假设L是带头结点的，所以L->next才是第一个结点 */
                         p = L->next;
-                        /*j为计数器*/
+                        /* j为计数器 */
                         j = 1;
-                        /*p不为空且计数器j还没有等于i时，循环继续*/
+                        /* p不为空且计数器j还没有等于i时，循环继续 */
                         while (p && j < i) 
                         {
                             p = p->next;
                             ++j;
                         }
-                        /*第i个结点不存在*/
+                        /* 第i个结点不存在 */
                         if (!p || j > i) 
                         {
                             return ERROR;
                         }
-                        /*取第i个结点的数据*/
+                        /* 取第i个结点的数据 */
                         *e = p->data;
                         return OK;
                     }
@@ -238,26 +238,26 @@
                     返回成功。
                 实现代码：
                 ```c
-                    /*初始条件：顺序线性表L已存在，1 <= i <= ListLength(L)*/
-                    /*操作结果：在L中第i个结点位置之前插入新的数据元素e，L长度加1*/
+                    /* 初始条件：顺序线性表L已存在，1 <= i <= ListLength(L) */
+                    /* 操作结果：在L中第i个结点位置之前插入新的数据元素e，L长度加1 */
                     Status ListInsert(LinkList *L, int i, ElemType e) 
                     {
                         int j;
                         LinkList p, s;
                         p = *L;
                         j = 1;
-                        /*寻找第i - 1个结点*/
+                        /* 寻找第i - 1个结点 */
                         while (p && j < i) 
                         {
                             p = p->next;
                             ++j;
                         }
-                        /*第i个结点不存在*/
+                        /* 第i个结点不存在 */
                         if (!p || j > i) 
                         {
                             return ERROR;
                         }
-                        /*生成新结点*/
+                        /* 生成新结点 */
                         s = (LinkList)malloc(sizeof(Node));
                         s->data = e;
                         s->next = p->next;
@@ -277,31 +277,31 @@
                     返回成功。
                 实现代码：
                 ```c
-                    /*初始条件：顺序线性表L已存在，1 <= i <= ListLength(L)*/
-                    /*操作结果：删除L的第i个结点，并用e返回其值，L的长度减1*/
+                    /* 初始条件：顺序线性表L已存在，1 <= i <= ListLength(L) */
+                    /* 操作结果：删除L的第i个结点，并用e返回其值，L的长度减1 */
                     Status ListDelete(LinkList *L, int i, ElemType e) 
                     {
                         int j;
                         LinkList p, q;
                         p = *L;
                         j = 1;
-                        /*遍历寻找第i-1个结点*/
+                        /* 遍历寻找第i-1个结点 */
                         while (p->next && j < i) 
                         {
                             p = p->next;
                             ++j;
                         }
-                        /*第i个结点不存在*/
+                        /* 第i个结点不存在 */
                         if (!(p->next) || j > i) 
                         {
                             return ERROR;
                         }
                         q = p->next;
-                        /*将q的后继赋值给p的后继*/
+                        /* 将q的后继赋值给p的后继 */
                         p->next = q->next;
-                        /*将q结点中的数据给e*/
+                        /* 将q结点中的数据给e */
                         *e = q->data;
-                        /*让系统回收此结点，释放内存*/
+                        /* 让系统回收此结点，释放内存 */
                         free(q);
                         return OK;
                     }
@@ -318,52 +318,52 @@
                         将p插入到头结点域前一新结点之间。
                 实现代码：
                 ```c
-                    /*随机产生n个元素的值，建立带表头结点的线性单链表L(头插法)*/
+                    /* 随机产生n个元素的值，建立带表头结点的线性单链表L(头插法) */
                     void CreateListHead(LinkList *L, int n) 
                     {
                         LinkList p;
                         int i;
-                        /*初始化随机数种子*/
+                        /* 初始化随机数种子 */
                         srand(time(0));
                         *L = (LinkList)malloc(sizeof(Node));
-                        /*先建立一个带头结点的单链表*/
+                        /* 先建立一个带头结点的单链表 */
                         (*L)->next = NULL;
                         for (i = 0; i < n; i++) 
                         {
-                            /*生成新节点*/
+                            /* 生成新节点 */
                             p = (LinkList)malloc(sizeof(Node));
-                            /*随机生成100以内的数字*/
+                            /* 随机生成100以内的数字 */
                             P->data = rand() % 100 + 1;
                             p->next = (*L)->next;
-                            /*插入到表头*/
+                            /* 插入到表头 */
                             (*L)->next = p;
                         }
                     }
                 ```
                 ```c
-                    /*随机产生n个元素的值，建立带表头结点的线性单链表L(尾插法)*/
+                    /* 随机产生n个元素的值，建立带表头结点的线性单链表L(尾插法) */
                     void CreateListTail(LinkList *L, int n) 
                     {
                         LinkList p, r;
                         int i;
-                        /*初始化随机数种子*/
+                        /* 初始化随机数种子 */
                         srand(time(0));
-                        /*L指整个单链表*/
+                        /* L指整个单链表 */
                         *L = (LinkList)malloc(sizeof(Node));
-                        /*r为指向尾部的结点*/
+                        /* r为指向尾部的结点 */
                         r = *L;
                         for (i = 0; i < n; i++) 
                         {
-                            /*生成新节点*/
+                            /* 生成新节点 */
                             p = (LinkList)malloc(sizeof(Node));
-                            /*随机生成100以内的数字*/
+                            /* 随机生成100以内的数字 */
                             P->data = rand() % 100 + 1;
-                            /*将表尾终端结点的指针指向新结点*/
+                            /* 将表尾终端结点的指针指向新结点 */
                             r->next = p;
-                            /*将当前的新结点定义为表尾终端结点*/
+                            /* 将当前的新结点定义为表尾终端结点 */
                             r = p;
                         }
-                        /*表示当前链表结束*/
+                        /* 表示当前链表结束 */
                         r->next = NULL;
                     }
                 ```
@@ -377,20 +377,20 @@
                         将q赋值给p。
                 实现代码：
                 ```c
-                    /*初始条件：顺序线性表L已存在，操作结果：将L重置为空表*/
+                    /* 初始条件：顺序线性表L已存在，操作结果：将L重置为空表 */
                     Status ClearList(LinkList *L) 
                     {
                         LinkList p, q;
-                        /*p指向第一个结点*/
+                        /* p指向第一个结点 */
                         p = (*L)->next;
-                        /*没到表尾*/
+                        /* 没到表尾 */
                         while (p) 
                         {
                             q = p->next;
                             free(p);
                             p = q;
                         }
-                        /*将头结点的指针域设置为空*/
+                        /* 将头结点的指针域设置为空 */
                         (*L)->next = NULL;
                         return OK;
                     }
@@ -415,13 +415,13 @@
     3、静态链表：使用数组来代替指针，来描述单链表。首先，让数组的元素都是由两个数据域组成，data和cur。也就是说，数组的每一个下标都对应一个data和一个cur。数据域data用来存放数据元素；而游标cur相当于单链表中的next指针，存放该元素的后继在数组中的下标。就把这种用数组表述的链表叫静态链表，还有起名叫做游标实现法。主要用于不支持指针的程序设计语言中。
     4、线性表的静态链表的存储结构：
     ```c
-        /*线性表的静态链表存储结构*/
-        /*假设链表的最大长度为1000*/
+        /* 线性表的静态链表存储结构 */
+        /* 假设链表的最大长度为1000 */
         #define MAX_SIZE 1000
         typedef struct 
         {
             ElemType data;
-            /*游标，为0时表示无指向*/
+            /* 游标，为0时表示无指向 */
             int cur;
         } Component, StaticLinkList[MAX_SIZE];
     ```
@@ -430,8 +430,8 @@
     数组第一个元素，即下标为0的元素cur就存放备用链表的第一个结点的下标；而数组的最后一个元素的cur则存放第一个有数值元素的下标，相当于单链表中的头结点作用,当整个链表为空时，则为0。
     初始化的数组状态：
     ```c
-        /*将一维数组space中各分量链成一备用链表*/
-        /*space[0].cur为头指针，"0"表示空指针*/
+        /* 将一维数组space中各分量链成一备用链表 */
+        /* space[0].cur为头指针，"0"表示空指针 */
         Status InitList(StaticLinkList space) 
         {
             int i;
@@ -439,7 +439,7 @@
             {
                 space[i].cur = i + 1;
             }
-            /*目前静态链表为空，最后一个元素的cur为0*/
+            /* 目前静态链表为空，最后一个元素的cur为0 */
             space[MAX_SIZE - 1].cur = 0;
             return OK;
         }
@@ -447,14 +447,14 @@
     5、静态链表的插入操作：
         思路：为了辨明数组中哪些分量未被使用，解决办法是将所有未被使用过的及已被删除的分量用游标链成一个备用链表，每当进行插入时，便可以从备用链表上取得第一个结点作为待插入的新结点。
         ```c
-            /*若备用空间链表非空，则返回分配的结点下标，否则返回0*/
+            /* 若备用空间链表非空，则返回分配的结点下标，否则返回0 */
             int Malloc_SLL(StaticLinkList space) 
             {
-                /*当前数组第一个元素的cur存的值，就是要返回的第一个备用空闲的下标*/
+                /* 当前数组第一个元素的cur存的值，就是要返回的第一个备用空闲的下标 */
                 int i = space[0].cur;
                 if (space[0].cur) 
                 {
-                    /*由于要拿出一个分量来使用了，所以我们就得把它的下一个分量用来做备用*/
+                    /* 由于要拿出一个分量来使用了，所以我们就得把它的下一个分量用来做备用 */
                     space[0].cur = space[i].cur;
                 }
                 return i;
@@ -465,26 +465,26 @@
             Status ListInsert(StaticLinkList L, int i, ElemType e) 
             {
                 int j, k, l;
-                /*注意k首先是最后一个元素的下标*/
+                /* 注意k首先是最后一个元素的下标 */
                 k = MAX_SIZE - 1;
                 if (i < 1 || i > ListLength(L) + 1) 
                 {
                     return ERROR;
                 }
-                /*获取空闲分量的下标*/
+                /* 获取空闲分量的下标 */
                 j = Malloc_SSL(L);
                 if (j) 
                 {
-                    /*将数据赋值给此分量的data*/
+                    /* 将数据赋值给此分量的data */
                     L[j].data = e;
-                    /*找到第i个元素的位置*/
+                    /* 找到第i个元素的位置 */
                     for (l = 1; l <= i - 1; l++) 
                     {
                         k = L[k].cur;
                     }
-                    /*把第i个元素之前的cur赋值给新元素的cur*/
+                    /* 把第i个元素之前的cur赋值给新元素的cur */
                     L[j].cur = L[k].cur;
-                    /*把新元素的下标赋值给第i个元素之前元素的cur*/
+                    /* 把新元素的下标赋值给第i个元素之前元素的cur */
                     L[k].cur = j;
                     return OK;
                 }
@@ -495,7 +495,7 @@
         思路：和前面一样，删除元素使，原来使需要释放结点的函数free()。现在也得自己实现它。
         实现代码：
         ```c
-            /*删除在L中第i个数据元素e*/
+            /* 删除在L中第i个数据元素e */
             Status LsitDelete(StaticLinkList L, int i) 
             {
                 int j, k;
@@ -513,18 +513,18 @@
                 Free_SSL(L, j);
                 return OK;
             }
-            /*将下标为k的空闲结点回收到备用链表*/
+            /* 将下标为k的空闲结点回收到备用链表 */
             void Free_SSL(StaticLinkList space, int k) 
             {
-                /*把第一个元素cur值赋给要删除的分量cur*/
+                /* 把第一个元素cur值赋给要删除的分量cur */
                 space[k].cur = space[0].cur;
-                /*把要删除的分量下标赋值给第一个元素的cur*/
+                /* 把要删除的分量下标赋值给第一个元素的cur */
                 space[0].cur = k;
             }
             ```
     7、静态链表的一些其他操作，比如ListLength()：
     ```c
-        /*初始条件：静态链表L已存在。操作结果：返回L中数据元素个数*/
+        /* 初始条件：静态链表L已存在。操作结果：返回L中数据元素个数 */
         int ListLength(StaticLinkList L) 
         {
             int j = 0;
@@ -548,25 +548,25 @@
     11、循环链表使用指向终端结点的尾指针而不使用头指针来表示循环链表，这样查找头结点和终端结点的时间复杂度都变为O(1)了，终端结点用尾指针rear指示，头结点就是rear->next，开始结点就是rear->next->next。
     12、要想将两个循环链表合并成一个表时，使用尾指针就很方便了，实现代码：
     ```c
-        /*保存A表的头结点*/
+        /* 保存A表的头结点 */
         p = rearA->next;
-        /*将本来是指向B表的第一个结点(不是头结点)赋值给rear->next*/
+        /* 将本来是指向B表的第一个结点(不是头结点)赋值给rear->next */
         rearA->next = rearB->next->next;
-        /*将原A表的头结点赋值给rearB->next*/
+        /* 将原A表的头结点赋值给rearB->next */
         rearB->next = p;
-        /*释放p*/
+        /* 释放p */
         free(p);
     ```
     13、双向链表：在单链表的每个结点中，再设置一个指向其前驱结点的指针域。
     14、双向链表的存储结构:
     ```c
-        /*线性表的双向链表存储结构*/
+        /* 线性表的双向链表存储结构 */
         typedef struct DuLNode 
         {
             ElemType data;
-            /*直接前驱指针*/
+            /* 直接前驱指针 */
             struct DuLNode *prior;
-            /*直接后继指针*/
+            /* 直接后继指针 */
             struct DuLNode *next;
         } DuLNode, *DulinkList;
     ```
@@ -576,26 +576,26 @@
     假设存储元素e的结点s，现在要实现将结点s插入到结点p和p->next之间：
     实现代码：
     ```c
-        /*这四步的顺序千万不能换！*/
-        /*把p赋值给s的前驱*/
+        /* 这四步的顺序千万不能换！ */
+        /* 把p赋值给s的前驱 */
         s->prior = p;
-        /*把p->next赋值给s的后继*/
+        /* 把p->next赋值给s的后继 */
         s->next = p->next;
-        /*把s赋值给p->next的前驱*/
+        /* 把s赋值给p->next的前驱 */
         p->next->prior = s;
-        /*把s赋值给p的后继*/
+        /* 把s赋值给p的后继 */
         p->next = s;
-        /*总结顺序就是：先搞定s的前驱和后继，再搞定后结点的前驱，最后解决前结点的后继*/
+        /* 总结顺序就是：先搞定s的前驱和后继，再搞定后结点的前驱，最后解决前结点的后继 */
     ```
     17、双向链表的删除操作：若要删除结点p只需要两步。
     实现代码：
     ```c
-        /*这里的p代表的是当前要删除的结点，与代码中的p不相同*/
-        /*把p->next赋值给p->prior的后继*/
+        /* 这里的p代表的是当前要删除的结点，与代码中的p不相同 */
+        /* 把p->next赋值给p->prior的后继 */
         p->prior->next = p->next;
-        /*把p->prior赋值给p->next的前驱*/
+        /* 把p->prior赋值给p->next的前驱 */
         p->next->prior = p->prior;
-        /*释放结点*/
+        /* 释放结点 */
         free(p);
     ```
 ## 三、栈与队列
@@ -625,12 +625,12 @@
     4、栈的顺序存储结构：栈的顺序存储其实也是线性表顺序存储的简化，我们简称为顺序栈。一般用数组下标为0的以端作为栈底比较好，因为首元素都在栈底，变化最小，所以让它作为栈底。当栈存在一个元素时，top为0，通常将空栈的判定条件定位top=-1。
     结构定义：
     ```c
-        /*SElemType类型根据实际情况而定，这里假设为int*/
+        /* SElemType类型根据实际情况而定，这里假设为int */
         typedef int SElemType;
         typedef struct 
         {
             SElemType data[MAX_SIZE];
-            /*用于栈顶指针*/
+            /* 用于栈顶指针 */
             int top;
         } SqStack;
     ```
@@ -638,14 +638,14 @@
     ```c
         Statuc Push(SqStack *S, SElemType e)
         {
-            //如果栈已经满了
+            // 如果栈已经满了
             if (S->top == MAXSIZE - 1)
             {
                 return ERROR;
             }
-            //栈顶指针加一
+            // 栈顶指针加一
             S->top++;
-            //将新插入元素赋值给栈顶空间
+            // 将新插入元素赋值给栈顶空间
             S->data[S->top] = e;
             return OK;
         }
@@ -655,14 +655,14 @@
     ```c
         Status Pop(SqStack *S, SElemType *e)
         {
-            //如果是空栈
+            // 如果是空栈
             if (s->top == -1)
             {
                 return ERROR;
             }
-            //将要删除的栈顶元素赋值给e
+            // 将要删除的栈顶元素赋值给e
             *e = S->data[S->top];
-            //栈顶指针减一
+            // 栈顶指针减一
             S->top--;
             return OK;
         }
@@ -673,13 +673,13 @@
     当top1 = -1， top2 = n的时候就是空栈，当top1 + 1 = top2的时候就是栈满。
     结构代码：
     ```c
-        /*两栈共享空间结构*/
+        /* 两栈共享空间结构 */
         typedef struct
         {
             SElemType data[MAX_SIZE];
-            //栈1栈顶指针
+            // 栈1栈顶指针
             int top1;
-            //栈2栈顶指针
+            // 栈2栈顶指针
             int top2;
         } SqDoubleStack;
     ```
@@ -687,24 +687,24 @@
     思路：除了要插入元素值参数歪，还需要有一个判断是栈1还是栈2的栈号参数stackNumber。
     实现代码：
     ```c
-        /*插入元素e为新的栈顶元素*/
+        /* 插入元素e为新的栈顶元素 */
         Status Push(SqDoubleStack *S, SElemType e, int stackNumber)
         {
-            //栈已经满了，不能再push新元素了
+            // 栈已经满了，不能再push新元素了
             if (S->top1 + 1 == S->top2)
             {
                 return ERROR;
             }
-            //如果是栈1有元素进栈
+            // 如果是栈1有元素进栈
             if (stackNumber == 1)
             {
-                //若是栈1则先top1+1然后给数组元素赋值
+                // 若是栈1则先top1+1然后给数组元素赋值
                 S->data[++S->top1] = e;
             }
-            //如果是栈2有元素进栈
+            // 如果是栈2有元素进栈
             else if (stackNumber == 2)
             {
-                //若是栈2则先top2-1然后给数组元素赋值
+                // 若是栈2则先top2-1然后给数组元素赋值
                 S->data[--S->top2] = e;
             }
             return OK;
@@ -712,27 +712,27 @@
     ```
     9、两栈共享空间的pop(出栈)操作：
     ```c
-        /*若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK，否则返回ERROR*/
+        /* 若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK，否则返回ERROR */
         Status Pop(SqDoubleStack *S, SElemType *e, int stackNumber)
         {
             if (stackNumber == 1)
             {
-                //栈1已经是空栈了
+                // 栈1已经是空栈了
                 if (S->top1 == -1)
                 {
                     return ERROR;
                 }
-                //将栈1的栈顶元素出栈
+                // 将栈1的栈顶元素出栈
                 *e = S->data[S->top1--];
             }
             else if (stackNumber == 2)
             {
-                //栈2已经是空栈了
+                // 栈2已经是空栈了
                 if (S->top2 == MAXSIZE)
                 {
                     return ERROR;
                 }
-                //将栈2的栈顶元素出栈
+                // 将栈2的栈顶元素出栈
                 *e = S->data[S->top2++];
             }
             return OK;
@@ -753,20 +753,20 @@
             LinkStackPtr top;
             int count;
         } LinkStack;
-        /*链栈的操作绝大部分都和单链表类似，只是在插入和删除上特殊一些*/
+        /* 链栈的操作绝大部分都和单链表类似，只是在插入和删除上特殊一些 */
     ```
     12、链栈的进栈(push)操作：
     假设元素值为e的新结点是s，top为栈顶指针。
     实现代码：
     ```c
-        /*插入元素为e的新的栈顶元素*/
+        /* 插入元素为e的新的栈顶元素 */
         Status Push(LinkStack *S, SElemType e)
         {
             LinkStackPtr s = (LinkStackPtr)malloc(sizeof(StackNode));
             s->data = e;
-            //把当前的栈顶元素赋值给新结点的直接后继
+            // 把当前的栈顶元素赋值给新结点的直接后继
             s->next = S->top;
-            //将新结点s赋值给栈顶指针
+            // 将新结点s赋值给栈顶指针
             S->top = s;
             S->count++;
             return OK;
@@ -777,21 +777,21 @@
     思路：假设变量p用来存储要删除的栈顶结点，将栈顶指针下移一位，最后释放p即可。
     实现代码：
     ```c
-        /*若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK，否则返回ERROR*/
+        /* 若栈不空，则删除S的栈顶元素，用e返回其值，并返回OK，否则返回ERROR */
         Status Pop(LinkStack *S, SElemType *e)
         {
             LinkStackPtr p;
-            //如果栈为空
+            // 如果栈为空
             if (StackEmpty(*S))
             {
                 return ERROR;
             }
             *e = S->top->data;
-            //将栈顶结点赋值给p
+            // 将栈顶结点赋值给p
             p = S->top;
-            //使栈顶指针下移一位，指向后一结点
+            // 使栈顶指针下移一位，指向后一结点
             S->top = S->top->next;
-            //释放结点p
+            // 释放结点p
             free(p);
             S->count--;
             return OK;
@@ -858,21 +858,21 @@
             (rear - front + QueueSize) % Queue
         (4)循环队列的顺序存储结构：
         ```c
-            /*QElemType类型根据实际情况而定，这里假设为int*/
+            /* QElemType类型根据实际情况而定，这里假设为int */
             typedef int QElemType;
-            /*循环队列的顺序存储结构*/
+            /* 循环队列的顺序存储结构 */
             typedef struct
             {
                 QElemType data[MAX_SIZE];
-                //头指针
+                // 头指针
                 int front;
-                //尾指针，若队列不空，指向队列尾元素的下一个位置
+                // 尾指针，若队列不空，指向队列尾元素的下一个位置
                 int rear;
             } SqQueue;
         ```
         (5)循环队列的初始化：
         ```c
-            /*初始化一个空队列Q*/
+            /* 初始化一个空队列Q */
             Status InitQueue(SqQueue *Q)
             {
                 Q->front = 0;
@@ -882,7 +882,7 @@
         ```
         (6)循环队列求队列长度：
         ```c
-            /*返回Q中的元素个数，也就是队列的当前长度*/
+            /* 返回Q中的元素个数，也就是队列的当前长度 */
             int QueueLength(SqQueue Q)
             {
                 return (Q.rear - Q.front + MAX_SIZE) % MAX_SIZE;
@@ -890,34 +890,34 @@
         ```
         (7)循环队列的入队列操作：
         ```c
-            /*若队列未满，则插入元素e为Q新的队尾元素*/
+            /* 若队列未满，则插入元素e为Q新的队尾元素 */
             Status EnQueue(SqQueue *Q, QElemType e)
             {
-                //队列满的判断
+                // 队列满的判断
                 if ((Q->rear + 1) % MAX_SIZE == Q->front)
                 {
                     return ERROR;
                 }
-                //将元素e赋值给队尾
+                // 将元素e赋值给队尾
                 Q->data[Q->rear] = e;
-                //rear指针向后移一位置，若到最后则转到数组头部
+                // rear指针向后移一位置，若到最后则转到数组头部
                 Q->rear = (Q->rear + 1) % MAX_SIZE;
                 return OK;
             }
         ```
         (8)循环队列的出队列操作：
         ```c
-            /*若队列不空，则删除Q中队头元素，用e返回其值*/
+            /* 若队列不空，则删除Q中队头元素，用e返回其值 */
             Status DeQueue(SqQueue *Q, QElemType *e)
             {
-                //队列空的判断
+                // 队列空的判断
                 if (Q->front == Q->rear)
                 {
                     return ERROR;
                 }
-                //将队头元素赋值给e
+                // 将队头元素赋值给e
                 *e = Q->data[Q->front];
-                //front指针向后移一位置，若到最后则转到数组头部
+                // front指针向后移一位置，若到最后则转到数组头部
                 Q->front = (Q->front + 1) % MAX_SIZE;
                 return OK;
             }
@@ -925,39 +925,39 @@
         (1)队列的链式存储结构，其实就是线性表的单链表，只不过它只能尾进头出而已，简称为链队列。为了操作的方便，将队头指针指向链队列的头结点，而队尾指针指向终端结点。空队列时，front和rear都指向头结点。
         (2)链队列的结构：
         ```c
-            /*QElemType类型根据实际情况而定，这里假设为int*/
+            /* QElemType类型根据实际情况而定，这里假设为int */
             typedef int QElemType;
-            /*结点结构*/
+            /* 结点结构 */
             typedef struct QNode
             {
                 QElemType data;
                 struct QNode *next;
             } QNode, *QueuePtr;
-            /*队列的链表结构*/
+            /* 队列的链表结构 */
             typedef struct
             {
-                //队头指针
+                // 队头指针
                 QueuePtr front;
-                //队尾指针
+                // 队尾指针
                 QueuePtr rear;
             } LinkQueue;
         ```
         (3)链队列的入队操作：就是在链表尾部插入结点。
         ```c
-            /*插入元素e为Q的新的队尾元素*/
+            /* 插入元素e为Q的新的队尾元素 */
             Status EnQueue(LinkQueue *Q, QElemType e)
             {
                 QueuePtr s = (QueuePtr)malloc(sizeof(QNode));
-                //存储分配失败
+                // 存储分配失败
                 if (!s)
                 {
                     exit(0);
                 }
                 s->data = e;
                 s->next = NULL;
-                //把拥有元素e新结点s赋值给原队尾结点的后继
+                // 把拥有元素e新结点s赋值给原队尾结点的后继
                 Q->rear->next = s;
-                //把当前的s设置为队尾结点，rear指向s
+                // 把当前的s设置为队尾结点，rear指向s
                 Q->rear = s;
                 return OK;
             }
@@ -966,22 +966,22 @@
             思路：出队操作时，就是头结点的后继结点出队，将头结点的后继改为它后面的结点，若链表除头结点外只剩一个元素时，则需将rear指向头结点。
             实现代码：
             ```c
-                /*若队列不空，删除Q的队头元素，用e返回其值，并返回OK，否则返回ERROR*/
+                /* 若队列不空，删除Q的队头元素，用e返回其值，并返回OK，否则返回ERROR */
                 Status DeQueue(LinkQueue *Q, QElemType *e)
                 {
                     QueuePtr p;
-                    //如果是空队列
+                    // 如果是空队列
                     if (Q->front == Q->rear)
                     {
                         return ERRROR;
                     }
-                    //将欲删除的对头结点暂存给p
+                    // 将欲删除的对头结点暂存给p
                     p = Q->front->next;
-                    //将欲删除的队头结点的值赋值给e
+                    // 将欲删除的队头结点的值赋值给e
                     *e = p->data;
-                    //将原队头结点后继p->next赋值给头结点后继
+                    // 将原队头结点后继p->next赋值给头结点后继
                     Q->front->next = p->next;
-                    //若对头是队尾，则删除后将rear指向头结点
+                    // 若对头是队尾，则删除后将rear指向头结点
                     if (Q->rear == p)
                     {
                         Q->rear = Q->front;
@@ -1018,35 +1018,35 @@
         end ADT
     4、Index的实现算法(暴力匹配)：
         ```c
-            /*若T为非空串。若主串S中第pos个字符之后存在与T相等的子串，则返回第一个这样的子串在S中的位置，否则返回0*/
+            /* 若T为非空串。若主串S中第pos个字符之后存在与T相等的子串，则返回第一个这样的子串在S中的位置，否则返回0 */
             int Index(String S, String T, int pos)
             {
                 int n, m , i;
                 String sub;
                 if (pos > 0)
                 {
-                    //得到主串S的长度
+                    // 得到主串S的长度
                     n = StrLength(S);
-                    //得到子串T的长度
+                    // 得到子串T的长度
                     m = StrLength(T);
                     i = pos;
                     while (i <= n - m + 1)
                     {
-                        //取主串第i个位置长度与T相等的子串给sub
+                        // 取主串第i个位置长度与T相等的子串给sub
                         SubString(sub, S, i, m);
-                        //如果两串不相等
+                        // 如果两串不相等
                         if (StrCompare(sub, T) != 0)
                         {
                             i++;
                         }
-                        //如果两串相等，则返回i值
+                        // 如果两串相等，则返回i值
                         else
                         {
                             return i;
                         }
                     }
                 }
-                //若无子串与T相等，返回0
+                // 若无子串与T相等，返回0
                 return 0;
             }
         ```
@@ -1055,29 +1055,29 @@
     7、朴素的模式匹配算法
         前面已经用串的其他操作实现了模式匹配的算法Index。现在考虑不用串的其他操作，而是只用基本的数组来实现同样的算法。注意，我们假设主串S和压迫匹配的子串T的长度存在S[0]和T[0]中。实现代码如下：
         ```c
-            /*返回子串T在主串S中第pos个字符之后的位置。若不存在，则函数返回值为0*/
-            /*T非空，1<=pos<=StrLength(S)。*/
+            /* 返回子串T在主串S中第pos个字符之后的位置。若不存在，则函数返回值为0 */
+            /* T非空，1<=pos<=StrLength(S)。 */
             int Index(String S, String T, int pos)
             {
-                //i用于主串S中当前位置下标，若pos不为1，则从pos位置开始匹配
+                // i用于主串S中当前位置下标，若pos不为1，则从pos位置开始匹配
                 int i = pos;
-                //j用于子串T中当前位置的下标值
+                // j用于子串T中当前位置的下标值
                 int j = 1;
-                //若i小于等于S长度且j小于等于T的长度时循环
+                // 若i小于等于S长度且j小于等于T的长度时循环
                 while (i <= S[0] && j <= T[0])
                 {
-                    //两字母相等则继续
+                    // 两字母相等则继续
                     if (S[i] == T[i])
                     {
                         i++;
                         j++;
                     }
-                    //指针后退重新开始匹配
+                    // 指针后退重新开始匹配
                     else
                     {
-                        //i退回到上次匹配首位的下一位
+                        // i退回到上次匹配首位的下一位
                         i = i - j + 2;
-                        //j退回到子串T的首位
+                        // j退回到子串T的首位
                         j = 1;
                     }
                 }
@@ -1093,19 +1093,19 @@
         ```
     8、KMP模式匹配算法
     ```c
-        /*通过计算返回子串T的next数组。*/
+        /* 通过计算返回子串T的next数组。 */
         void get_next(String T, int *next)
         {
             int i, j;
             i = 1;
             j = 0;
-            //注意：next[0]不存任何元素，当然也可以用来存长度
+            // 注意：next[0]不存任何元素，当然也可以用来存长度
             next[1] = 0;
-            //此处T[0]表示串T的长度
+            // 此处T[0]表示串T的长度
             while (i < T[0])
             {
-                //T[i]表示后缀的单个字符
-                //T[j]表示前缀的单个字符
+                // T[i]表示后缀的单个字符
+                // T[j]表示前缀的单个字符
                 if (j == 0 || T[i] == T[j])
                 {
                     i++;
@@ -1114,36 +1114,36 @@
                 }
                 else
                 {
-                    //若字符不相同，则j值回溯
+                    // 若字符不相同，则j值回溯
                     j = next[j];
                 }  
             }
         }
-        /*返回子串T在主串S中第pos个字符之后的位置。若不存在，则函数返回值为0。*/
-        /*T非空，1<=pos<=StrLength(S)*/
+        /* 返回子串T在主串S中第pos个字符之后的位置。若不存在，则函数返回值为0。 */
+        /* T非空，1<=pos<=StrLength(S) */
         int Index_KMP(String S, String T, int pos)
         {
-            //i用于主串S当前位置下标值，若pos不为1，则从pos位置开始匹配
+            // i用于主串S当前位置下标值，若pos不为1，则从pos位置开始匹配
             int i = pos;
-            //j用于子串T中当前位置下标值
+            // j用于子串T中当前位置下标值
             int j = 1;
-            //定义一个next数组
+            // 定义一个next数组
             int next[255];
-            //对T作分析，得到next数组
+            // 对T作分析，得到next数组
             get_next(T, next);
-            //若i小于S的长度且j小于T的长度时，循环继续
+            // 若i小于S的长度且j小于T的长度时，循环继续
             while (i <= S[0] && j <= T[0])
             {
-                //两字母相等则继续判断，与朴素算法相比增加了一个j==0的判断
+                // 两字母相等则继续判断，与朴素算法相比增加了一个j==0的判断
                 if (j == 0 || S[i] == T[j])
                 {
                     i++;
                     j++;
                 }
-                //不相等则指针后退重新开始匹配
+                // 不相等则指针后退重新开始匹配
                 else
                 {
-                    //j退回到合适的位置，i值不变
+                    // j退回到合适的位置，i值不变
                     j = next[j];
                 }
             }
@@ -1161,7 +1161,7 @@
     9、KMP模式匹配算法改进：将get_next函数进行改良，使用nextval来取代next
     改进代码：
     ```c
-        /*求模式串T的next函数修正值并存入数组nextval*/
+        /* 求模式串T的next函数修正值并存入数组nextval */
         void get_nextval(String T, int *nextval)
         {
             int i, j;
@@ -1174,12 +1174,12 @@
                 {
                     i++;
                     j++;
-                    //若当前字符与前缀字符不同，则当前的j为nextval在i位置的值
+                    // 若当前字符与前缀字符不同，则当前的j为nextval在i位置的值
                     if (T[i] != T[j])
                     {
                         nextval[i] = j;
                     }
-                    //如果与前缀字符相同，则将前缀字符的nextval值赋给nextval在i位置的值
+                    // 如果与前缀字符相同，则将前缀字符的nextval值赋给nextval在i位置的值
                     else
                     {
                         nextval[i] = nextval[j];
@@ -1236,26 +1236,26 @@
     7、树的存储结构：利用顺序存储结构和链式存储结构的特点实现树的存储结构表示。三种表示方法：双亲表示法、孩子表示法、孩子兄弟表示法。
     8、双亲表示法：假设以一组连续空间存储树的结点，同时在每个结点这种，附设一个指示器指示其双亲结点在链表中的位置。其中data是数据域，存储结点的数据信息。而parent是指针域，存储该结点的双亲在数组中的下标。
     ```c
-        /*树的双亲表示法结点结构定义*/
+        /* 树的双亲表示法结点结构定义 */
         #define MAX_TREE_SIZE 100
-        //树结点的数据类型，目前暂定为为整型
+        // 树结点的数据类型，目前暂定为为整型
         typedef int TElemType;
-        /*结点结构*/
+        /* 结点结构 */
         typedef struct PTNode
         {
-            //结点数据
+            // 结点数据
             TElemType data;
-            //双亲位置
+            // 双亲位置
             int parent;
         } PTNode;
-        /*树结构*/
+        /* 树结构 */
         typedef struct
         {
-            //结点数组
+            // 结点数组
             PTNode nodes[MAX_TREE_SIZE];
-            //根的位置
+            // 根的位置
             int r;
-            //结点数
+            // 结点数
             int n;
         } PTree;
     ```
@@ -1263,34 +1263,34 @@
     9、孩子表示法：把每个结点的孩子结点排列起来，以单链表作为存储结构，则n个结点有n个孩子链表，如果是叶子结点则此单链表为空。然后n个头指针又构成一个线性表，采用顺序存储结构，存放进一个一位数组中。
     因此设计两种结点结构，一个是孩子链表的孩子结点，其中data是数据域，用来存储某个结点在表头数组中的下标。next是指针域，用来存储指向某结点的下一个孩子结点的指针。另一个是表头数组的表头结点，其中data是数据域，存储某结点的数据信息。firstchild是头指针域，存储该结点的孩子链表的头指针。
     ```c
-        /*树的孩子表示法结构定义*/
+        /* 树的孩子表示法结构定义 */
         #define MAX_TREE_SIZE 100
-        /*孩子结点*/
+        /* 孩子结点 */
         typedef struct CTNode
         {
             int child;
             struct CTNode *next;
         } *ChildPtr;
-        /*表头结构*/
+        /* 表头结构 */
         typedef struct
         {
             TElemType data;
             ChildPtr firstchild;
         } STBox;
-        /*树结构*/
+        /* 树结构 */
         typedef struct
         {
-            //结点数组
+            // 结点数组
             CTBox nodes[MAX_TREE_SIZE];
-            //根的位置
+            // 根的位置
             int r;
-            //结点数
+            // 结点数
             int n;
         } CTree;
     ```
     10、孩子兄弟表示法：任意一棵树，它的结点的第一个孩子如果存在就是唯一的，它的右兄弟如果存在也是唯一的。因此，我们设置两个指针，分别指向该结点的第一个孩子和此结点的右兄弟。其中data是数据域，firstchild为指针域，存储该结点的第一个孩子结点的存储地址，rightsib是指针域，存储该结点的右兄弟结点的存储地址。
     ```c
-        /*树的孩子兄弟表示法结构定义*/
+        /* 树的孩子兄弟表示法结构定义 */
         typedef struct CSNode
         {
             TElemType data;
@@ -1339,15 +1339,15 @@
     16、二叉树的顺序存储结构：一般只用于完全二叉树。
     17、二叉链表：二叉树每个结点最多有两个孩子，所以为它设计一个数据域和两个指针域，称这样的链表叫做二叉链表。其中data是数据域，lchild和rchild都是指针域，分别存放指向左孩子和右孩子的指针。
     ```c
-        /*二叉树的二叉链表结点结构定义*/
-        /*结点结构*/
+        /* 二叉树的二叉链表结点结构定义 */
+        /* 结点结构 */
         typedef struct BiTNode
         {
-            //结点数据
+            // 结点数据
             TElemType data;
-            //左孩子指针
+            // 左孩子指针
             struct BiTNode *lchild;
-            //右孩子指针
+            // 右孩子指针
             struct BiTNode *rchild;
         } BiTNode, *BiTree;
     ```
@@ -1360,59 +1360,180 @@
         (4)规则是若二叉树为空，则空操作返回，否则从树的第一层，也就是根节点开始访问，从上而下逐层遍历，在同一层中，按从左到右的顺序对结点逐个访问。
     20、前序遍历算法：
     ```c
-        /*二叉树的前序遍历递归算法*/
+        /* 二叉树的前序遍历递归算法 */
         void PreOrderTraverse(BiTree T)
         {
             if (T == NULL)
             {
                 return;
             }
-            //显示结点数据，可以更改为其他对结点的操作
+            // 显示结点数据，可以更改为其他对结点的操作
             printf("%c", T->data);
-            //再前序遍历左子树
+            // 再前序遍历左子树
             PreOrderTraverse(T->lchild);
-            //最后前序遍历右子树
+            // 最后前序遍历右子树
             PreOrderTraverse(T->rchild);
         }
     ```
     21、中序遍历算法：
     ```c
-        /*二叉树的中序遍历递归算法*/
+        /* 二叉树的中序遍历递归算法 */
         void InOrderTraverse(BiTree T)
         {
             if (T == NULL)
             {
                 return;
             }
-            //先中序遍历左子树
+            // 先中序遍历左子树
             InOrderTraverse(T->lchild);
-            //显示结点数据，可以更改为其他对结点的操作
+            // 显示结点数据，可以更改为其他对结点的操作
             printf("%c", T->data);
-            //最后中序遍历右子树
+            // 最后中序遍历右子树
             InOrderTraverse(T->rchild);
         }
     ```
     22、后序遍历算法：
     ```c
-        /*二叉树的后序遍历递归算法*/
+        /* 二叉树的后序遍历递归算法 */
         void PostOrderTraverse(BiTree T)
         {
             if (T == NULL)
             {
                 return;
             }
-            //先后序遍历左子树
+            // 先后序遍历左子树
             PostOrderTraverse(T->lchild);
-            //然后后后序遍历右子树
+            // 然后后后序遍历右子树
             PostOrderTraverse(T->rchild);
-            //显示结点数据，可以更改为其他对结点的操作
+            // 显示结点数据，可以更改为其他对结点的操作
             printf("%c", T->data);
         }
     ```
     23、已知前序遍历序列和中序遍历序列，可以唯一确定一棵二叉树；
         已知后序遍历序列和中序遍历序列，可以唯一确定一棵二叉树。
-    24、二叉树的建立：
-    25、
+    24、二叉树的建立：将二叉树的每个结点的空指针引出一个虚结点，其值为一个特定值，比如“#”。我们称这种处理后的二叉树为原二叉树的扩展二叉树。这样扩展二叉树就可以做到一个遍历序列确定一棵二叉树了。
+    ```c
+        /* 按前序输入二叉树中结点的值(一个字符) */
+        /* #表示空树，构造二叉链表表示二叉树T */
+        void CreateBiTree(BiTree *T)
+        {
+            TElemType ch;
+            scanf("%c", &ch);
+            if (ch == '#')
+            {
+                *T = NULL;
+            }
+            else
+            {
+                *T = (BiTree)malloc(sizeof(BiTNode));
+                if (!*T)
+                {
+                    printf("内存分配失败。\n");
+                    exit(0);
+                }
+                // 生成根节点
+                (*T)->data = ch;
+                // 构造左子树
+                CreateBiTree(&(*T)->lchild);
+                // 构造右子树
+                CreateBiTree(&(*T)->rchild);
+            }
+        }
+    ```
+    当然也可以用中序或者后序遍历的方式实现二叉树的建立，只不过代码里生成结点和构造左右子树的代码顺序交换一下。另外，输入的字符也要做相应的更改。
+    25、(1)线索二叉树：利用那些空的指针域来存放指向结点在某种遍历次序下的前驱和后继结点的地址。把指向前驱和后继的指针称为线索，加上线索的二叉链表称为线索链表，相应的二叉树就称为线索二叉树(Threaded Binary Tree)。
+        将所有空指针域中的rchild改为指向当前结点的后继。
+        将所有空指针域中的lchild改为指向当前结点的前驱。
+        其实线索二叉树等于是把一棵二叉树转变成了一个双向链表。
+        (2)线索化：对二叉树以某种次序遍历使其变为线索二叉树的过程称做是线索化。
+        (3)为了知道某一结点的lchild和rchild是指向它们的左右孩子还是指向前驱或者后继呢。需要再增设两个标志域ltag和rtag。
+            其中：ltag为0时指向该结点的左孩子，为1时指向该结点的前驱；
+                rtag为0时指向该结点的右孩子，为1时指向该结点的后继。
+        (4)线索二叉树的结构实现：
+        ```c
+            /* 二叉树的二叉线索存储结构定义 */
+            // Link==0，表示指向左右孩子指针
+            // Thread==1，表示指向前驱或后继的线索
+            typedef enum {Link, Thread} PointerTag;
+            typedef struct BiThrNode
+            {
+                // 结点数据
+                TElemType data;
+                // 左右孩子指针
+                struct BiThrNode *lchild, *rchild;
+                // 左右标志
+                PointerTag LTag, RTag;
+            } BiThrNode, *BiThrTree;
+        ```
+        由于前驱和后继的信息只有在遍历该二叉树的时候才能得到，所以线索化的过程就是在遍历的过程中修改空指针的过程。
+        (5)中序遍历线索化：
+        注意：这段代码其实是不完整的，运行会因为pre未初始化数据会报错。正确的应该是将树的头结点赋值给pre。详细看实现代码。
+        ```c
+            // 全局变量，始终指向刚刚访问过的结点
+            BiThrTree pre;
+            /* 中序遍历进行中序线索化 */
+            void InThreading(BiThrTree p)
+            {
+                if (p)
+                {
+                    // 递归左子树线索化
+                    InThreading(p->lchild);
+                    // 没有左孩子
+                    if (!p->lchild)
+                    {
+                        // 前驱线索
+                        p->LTag = Thread;
+                        // 左孩子指针指向前驱
+                        p->lchild = pre;
+                    }
+                    // 前驱没有右孩子
+                    if (!pre->rchild)
+                    {
+                        // 后继线索
+                        pre->RTag = Thread;
+                        // 前驱右孩子指针指向后继(当前结点p)
+                        pre->rchild = p;
+                    }
+                    // 保持pre指向p的前驱
+                    pre = p;
+                    // 递归右子树线索化
+                    InThreading(p->rchild);
+                }
+            }
+        ```
+        和双向链表一样，在二叉树线索链表上添加一个头结点，并令其lchild域的指针指向二叉树的根节点，其rchild域的指针指向中序遍历时访问的最后一个结点。令二叉树的中序序列中的第一个结点的lchild域指针和最后一个结点的rchild域指针均指向头结点。这样既可以从第一个结点其顺后继进行遍历，也可以从最后一个结点起顺前驱进行遍历。
+        (6)遍历的代码实现：
+        ```c
+            /* T指向头结点，头结点左链lchild指向根节点，头结点右链rchild指向中序遍历的最后一个结点。 */
+            /* 中序遍历二叉线索链表表示的二叉树T */
+            int InOrderTraverse_Thr(BiThrTree T)
+            {
+                BiThrTree p;
+                // p指向根结点
+                p = T->lchild;
+                // 空树或遍历结束时，p==T
+                while (p != T)
+                {
+                    // 当LTag==0时循环到中序序列的第一个结点
+                    while (p->Ltag == Link)
+                    {
+                        p = p->lchild;
+                    }
+                    // 显示结点数据，可以更改为其他对结点的操作
+                    printf("%c", p->data);
+                    while (p->LTag == Thread && p->rchild != T)
+                    {
+                        p = p->rchild;
+                        printf("%c", p->data);
+                    }
+                    // p进至其右子树根
+                    p = p->rchild;
+                }
+                return OK;
+            }
+        ```
+        从代码可以看出，等于时一个链表的扫描，所以时间复杂度为O(n)。
+        在实际问题中，如果所用的二叉树需要经常遍历或者查找结点时需要某种遍历序列中的前驱和后继，那么采用线索二叉树的存储结构就是非常不错的选择。
     26、
     27、
     28、

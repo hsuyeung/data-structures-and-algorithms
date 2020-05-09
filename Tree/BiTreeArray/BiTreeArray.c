@@ -5,7 +5,61 @@
 
 int main(void)
 {
+    Position p;
+    TElemType e;
+    SqBiTree T;
 
+    // 构建空二叉树
+    InitBiTree(T);
+    // 按照层序次序给二叉树赋值
+    CreateBiTree(T);
+    // 判断是否为空
+    printf("建立二叉树后，树空否？%d(1:是 0:否) 树的深度=%d\n", BiTreeEmpty(T), BiTreeDepth(T));
+    // 二叉树的根
+    if (Root(T, &e))
+    {
+        printf("二叉树的根为：%d\n", e);
+    }
+    else
+    {
+        printf("树为空，没有根。\n");
+    }
+    // 二叉树的四种遍历方式
+    printf("层序遍历二叉树:\n");
+    LevelOrderTraverse(T);
+    printf("前序遍历二叉树:\n");
+    PreOrderTraverse(T);
+    printf("中序遍历二叉树:\n");
+    InOrderTraverse(T);
+    printf("后序遍历二叉树:\n");
+    PostOrderTraverse(T);
+    printf("修改层号3本层序号2的结点值。");
+    p.level = 3;
+    p.order = 2;
+    // 获取指定位置结点的值
+    e = Value(T, p);
+    printf("待修改结点的原值为%d请输入新值:", e);
+    fflush(stdin);
+    scanf("%d", &e);
+    // 给指定位置结点赋值
+    Assign(T, p, e);
+    printf("前序遍历二叉树:\n");
+    PreOrderTraverse(T);
+    // 打印与给定值相等的结点的双亲、左右孩子、左右兄弟
+    printf("结点值为%d的双亲为%d,左右孩子分别为", e, Parent(T, e));
+	printf("%d,%d,左右兄弟分别为", LeftChild(T, e), RightChild(T, e));
+	printf("%d,%d\n", LeftSibling(T, e), RightSibling(T, e));
+    // 清空二叉树
+    ClearBiTree(T);
+	printf("清除二叉树后，树空否？%d(1:是 0:否) 树的深度=%d\n", BiTreeEmpty(T), BiTreeDepth(T));
+    if (Root(T, &e))
+    {
+        printf("二叉树的根为：%d\n", e);
+    }
+    else
+    {
+        printf("树为空，没有根。\n");
+    }
     return 0;
 }
 

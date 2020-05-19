@@ -1696,7 +1696,354 @@
             ```
             从代码中可以得到，n个顶点和e条边的无向网图的创建，时间复杂度为O(n+n²+e)，其中对邻接矩阵G.arc的初始化耗费了O(n²)的时间。
         (2)邻接表：
-        (3)
+            a.邻接矩阵对于边数相对顶点较少图，这种结构就存在对存储空间的极大浪费。
+            b.类似于树的孩子表示法，将结点存入数组，并对结点的孩子进行链式存储，这同样适用于图的存储。把这种数组与链表相结合的存储方法称为邻接表(Adjacency List)。
+            c.邻接表的处理方法：
+                图中顶点用一个一维数组存储，当然，顶点也可以用单链表存储，不过数组可以较容易地读取顶点信息，更加方便。另外，对于顶点数组中，每个数据元素还需要存储指向第一个邻接点的指针，以便于查找该顶点的边信息；
+                图中每个顶点vi的所有邻接点构成一个线性表，由于邻接点的个数不定，所以用单链表存储，无向图称为顶点vi的边表，有向图则成为顶点vi作为弧尾的出边表。
+            d.顶点表中的各个结点由data和firstedge两个域表示，data是数据域，存储顶点的信息，firstedge是指针域，指向边表的第一个结点，即此顶点的第一个邻接点。边表结点由adjvex和next两个域组成。adjvex是邻接点域，存储某结点的邻接点在顶点表中的下标，next则存储指向边表中下一个结点的指针。
+            e.根据邻接表的结构，
+                要想知道某个顶点的度，就去查找这个顶点的边表中结点的个数；
+                若要判断vi到vj是否存在边，只需要测试顶点vi边表中的adjvex是否存在结点vj的下标j就行了；
+                若求顶点的所有邻接点，其实就是对此顶点的边表进行遍历，得到的adjvex域对应的顶点就是邻接点。
+            f.对于有向图，邻接表结构是类似的。由于有向图有方向，我们是以顶点为弧尾来存储边表的，这样很容易得到每个顶点的出度。但有时为了方便确定顶点的入度或以顶点为弧头的弧，我们可以建立一个有向图的逆邻接矩阵，即对每个顶点vi都建立一个链接为vi为弧头的表。(比如a->b，那么a是弧尾，b是弧头，参考上方有向边中的定义)
+            g.对于有权值得网图，可以在边表结点定义中再增加一个weight得数据域，存储权值信息即可。
+            h.关于结点定义的代码：
+            ```c
+                /* 顶点类型应由用户定义 */
+                typedef char VertexType;
+                /* 边上的权值类型应由用户定义 */
+                typedef int EdgeType;
+                /* 边表结点 */
+                typedef struct EdgeNode
+                {
+                    /* 邻接点域，存储该顶点对应下的下标 */
+                    int adjvex;
+                    /* 用于存储权值，对于非网图可以不需要 */
+                    EdgeType weight;
+                    /* 链域，指向下一个邻接点 */
+                    struct EdgeNode *next;
+                } EdgeNode;
+                /* 顶点表结点 */
+                typedef struct VertexNode
+                {
+                    /* 顶点域，存储顶点信息 */
+                    VertexType data;
+                    /* 边表头指针 */
+                    EdgeNode *firstedge;
+                } VertexNode, AdjList[MAX_VEX];
+                /* 邻接表结构 */
+                typedef struct
+                {
+                    /* 邻接表 */
+                    AdjList adjList;
+                    /* 图中当前顶点数和边数 */
+                    int numVertexes, numEdges;
+                } GraphAdjList;
+            ```
+            i.邻接表的创建代码：
+            ```c
+                /* 建立图的邻接表结构 */
+                void CreateALGraph(GraphAdjList *G)
+                {
+                    int i, j, k;
+                    EdgeNode *e;
+                    printf("输入顶点数和边数：\n");
+                    // 输入顶点数和边数
+                    scanf("%d,%d", &G->numVertexes, &G->numEdges);
+                    // 输入顶点信息，建立顶点表
+                    for (i = 0; i < G->numVertexes; i++)
+                    {
+                        // 输入顶点信息
+                        scanf("%d", &G->adjList[i].data);
+                        // 将边表置为空表
+                        G->adjList[i].firstedge = NULL;
+                    }
+                    // 建立边表
+                    for (k = 0; k < G->numEdges; k++)
+                    {
+                        printf("输入边(vi, vj)上的顶点序号：\n");
+                        scanf("%d,%d", &i, &j);
+
+                        // ****************
+                        // 以下代码采用头插法
+                        // ****************
+
+                        // 向内存申请空间，生成边表结点
+                        e = (EdgeNode *) malloc(sizeof(EdgeNode));
+                        // 邻接序号为j
+                        e->adjvex = j;
+                        // 将e指针指向当前顶点指向的结点
+                        e->next = G->adjList[i].firstedge;
+                        // 将当前顶点的指针指向e
+                        G->adjList[i].firstedge = e;
+                        // 向内存申请空间，生成边表结点
+                        e = (EdgeNode *) malloc(sizeof(EdgeNode));
+                        // 邻接序号为i
+                        e->adjvex = i;
+                        // 将e指针指向当前顶点指向的结点
+                        e->next = G->adjList[j].firstedge;
+                        // 将当前顶点的指针指向e
+                        G->adjList[j].firstedge = e;
+                    }
+                }
+            ```
+            由于对于无向图，一条边对应都是两个顶点，所以在循环中，一次就针对i和j分别进行了插入。本算法的时间复杂度，对于n个顶点e条边来说，是O(n+e)。
+            j.十字链表：对于有向图来说，邻接表是有缺陷的，关心了出度问题，想了解入度就必须要遍历整个图才能知道，反之，逆邻接表解决了入度却不了解出度的情况，于是将邻接表与逆邻接表结合起来组成了狮子链表(Orthogonal List)。
+                重新定义顶点表结点结构：
+                    其中firstin表示入边表头指针，指向该顶点的入边表中第一个结点，firstout表示出边表头指针，指向该顶点的出边表战中的第一个结点。
+                重新定义边表结点结构：
+                    其中tailvex是指弧起点在顶点表的下标，headvex是指弧重点在定点表中的下标，headlink是指入边表指针域，指向终点相同的下一条边，taillink是指边表指针域，指向起点相同的下一条边。如果是网，还可以再增加一个weight域来存储权值。
+            k.邻接多重表：当更多的关注于边的操作时可以用这个结构。
+                重新定义边表结点结构：其中ivex和jvex是与某条边依附的两个顶点在顶点表中下标。ilink指向依附顶点ivex的下一条边，jlink指向依附顶点jvex的下一条边。这就是邻接多重表结构。
+            l.边集数组：边集数组是由两个一维数组构成。一个存储顶点的信息；另一个是存储边的信息，这个边数组每个数据元素由一条边的起点下标(begin)、终点下标(end)和权(weight)组成。
+            这种结构更适合对边依次进行处理的操作，而不适合对顶点相关的操作。相关介绍在后面的克鲁苏卡尔(Kruskal)算法中介绍。
+        (3)图的遍历：从图中某一顶点出发访遍图中其余顶点，且使每一个顶点仅被访问一次，这一过程就叫做图的遍历。
+            a.深度优先遍历(Depth_First_Search)，也有称为深度优先搜索，简称为DFS。它从图中某个顶点v出发，访问此顶点，然后从v未被访问得邻接点出发深度优先遍历图，直至图中所有和v有路径相通的顶点都被访问到。事实上，我们这里讲到得使连通图，对于非连通图，只需要对他的连通分量分别进行深度优先遍历，即在先前一个顶点进行一次深度优先遍历后，若图中尚有顶点未被访问，则另选图中一个未曾被访问的顶点作为起始点，重复上述过程，直至图中所有顶点都被访问到为止。
+            b.邻接矩阵的深度优先遍历算法：
+            ```c
+                /* Boolean是布尔类型，其值是TRUE或FALSE */
+                typedef int Boolean;
+                // 访问标志的数组
+                Boolean visited[MAX];
+                /* 邻接矩阵的深度优先递归算法 */
+                void DFS(MGraph G, int i)
+                {
+                    int j;
+                    visited[i] = TRUE;
+                    // 打印顶点，也可以其他操作
+                    printf("%c ", G.vexs[i]);
+                    for (j = 0; j < G.numVertexes; j++)
+                    {
+                        if (G.arc[i][j] == 1 && !visited[j])
+                        {
+                            // 对未访问的邻接顶点递归调用
+                            DFS(G, j);
+                        }
+                    }
+                }
+                /* 邻接矩阵的深度遍历操作 */
+                void DFSTraverse(MGraph G)
+                {
+                    int i;
+                    for (i = 0; i < G.numVertexes; i++)
+                    {
+                        // 初始所有顶点状态都是未访问过状态
+                        visited[i] = FALSE;
+                    }
+                    for (i = 0; i < G.numVertexes; i++)
+                    {
+                        // 对未访问过的顶点调用DFS，若是连通图，只会执行一次
+                        if (!visited(i))
+                        {
+                            DFS(G, i);
+                        }
+                    }
+                }
+            ```
+            c.邻接表的深度遍历算法：
+            ```c
+                /* 邻接表的深度优先递归算法 */
+                void DFS(GraphAdjList GL, int i)
+                {
+                    EdgeNode *p;
+                    visited[i] = TRUE;
+                    printf("%c ", GL->adjList[i].data);
+                    p = GL->adjList[i].firstedge;
+                    while (p)
+                    {
+                        if (!visited[p->adjvex])
+                        {
+                            DFS(GL, p->adjvex);
+                        }
+                        p = p->next;
+                    }
+                }
+                /* 邻接表的深度遍历操作 */
+                void DFSTraverse(GraphAdjList GL)
+                {
+                    int i;
+                    for (i = 0; i < GL->numVertexes; i++)
+                    {
+                        viisted[i] = FALSE;
+                    }
+                    for (i = 0; i < GL->numVertexes; i++)
+                    {
+                        // 对未访问过的顶点调用DFS，若是连通图，只会执行一次
+                        if (!visited[i])
+                        {
+                            DFS(GL, i);
+                        }
+                    }
+                }
+            ```
+            d.比较上述两种结构，邻接矩阵要查找每个顶点的邻接点需要访问矩阵中所有元素，需要O(n²)时间，邻接表所需时间取决于顶点和边的数量，所以是O(n+e)。显然对于点多边少的稀疏图来说，邻接表结构使得算法在时间效率上大大提高。
+            对于有向图而言，由于它只是对铜到存在可行或不可行的判断，算法上没有任何变化，完全可以通用的。
+            e.广度优先遍历(Breadth_First_Search)，又称为广度优先搜索，简称BFS。
+            如果说图的深度优先遍历类似于树的前序遍历，那么图的广度优先遍历就类似于树的层序遍历了。
+            f.邻接矩阵结构的广度优先遍历算法：
+            ```c
+                /* 邻接矩阵的广度遍历算法 */
+                void BFSTraverse(MGraph G)
+                {
+                    int i, j;
+                    Queue Q;
+                    for (i = 0; i < G.numVertexes; i++)
+                    {
+                        visited[i] = FALSE;
+                    }
+                    // 初始化以辅助用的队列
+                    InitQueue(&Q);
+                    // 对每一个顶点做循环
+                    for (i = 0; i < G.numVertexes; i++)
+                    {
+                        // 若是未访问过就处理
+                        if (!visited[i])
+                        {
+                            // 设置当前顶点访问过
+                            visited[i] = TRUE;
+                            // 打印顶点，也可以其他操作
+                            printf("%c ", G.vexes[i]);
+                            // 将此顶点入队列
+                            EnQueue(&Q, i);
+                            // 若当前队列不为空
+                            while (!QueueEmpty(Q))
+                            {
+                                // 将队中元素出队列，赋值给i
+                                DeQueue(&Q, &i);
+                                for (j = 0; j < G.numVertexes; j++)
+                                {
+                                    // 判断其他顶点若与当前顶点存在边且未访问过
+                                    if (G.arc[i][j] == 1 && !visited[j])
+                                    {
+                                        // 将找到的此顶点标记为已访问
+                                        vivited[j] = TRUE;
+                                        // 打印顶点
+                                        printf("%c ", G.vexes[j]);
+                                        // 将找到的此顶点入队列
+                                        EnQueue(&Q, j);
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            ```
+            g.邻接表的广度优先遍历算法：
+            ```c
+                /* 邻接表的广度遍历算法 */
+                void BFSTraverse(GraphAdjList GL)
+                {
+                    int i;
+                    EdgeNode *p;
+                    Queue Q;
+                    for (i = 0; i < GL->numVertexes; i++)
+                    {
+                        visited[i] = FALSE;
+                    }
+                    INitQueue(&Q);
+                    for (i = 0; i < GL->numVertexes; i++)
+                    {
+                        if (!visited[i])
+                        {
+                            visited[i] = TRUE;
+                            printf("%c ", GL->adjList[i].data);
+                            EnQueue(&Q, i);
+                            while (!QueueEmpty(Q))
+                            {
+                                DeQueue(&Q, &i);
+                                // 找到当前顶点边表链表头指针
+                                p = GL->adjList[i].firstedge;
+                                while (p)
+                                {
+                                    // 若此顶点未被访问
+                                    if (!visited[p->adjvex])
+                                    {
+                                        visited[p->adjvex] = TRUE;
+                                        printf("%c ", GL->adjList[p->adjvex].data);
+                                        // 将此顶点入队列
+                                        EnQueue(&Q, p->adjvex);
+                                    }
+                                    // 指针指向下一个邻接点
+                                    p = p->next;
+                                }
+                            }
+                        }
+                    }
+                }
+            ```
+            h.DFS和BFS的时间复杂度是一样的，不同之处仅在于对顶点访问的顺序不同。深度优先更适合目标比较明确，以找到目标为主要目的的情况，而广度优先更适合在不断扩大遍历范围时找到相对最优解的情况。
+        (4)最小生成树：把构造连通网的最小代价生成树称为最小生成树(Minimum Cost Spanning Tree)。找连通网的最小生成树，经典的有两种算法，普里姆算法和克鲁斯卡尔算法。
+            a.普里姆(Prim)算法：
+            ```c
+                /* Prim算法生成最小生成树 */
+                void MiniSpanTree_Prim(MGraph G)
+                {
+                    int min, i, j, k;
+                    // 保存相关顶点下标
+                    int adjvex[MAX_VEX];
+                    // 保存相关顶点间边的权值
+                    int lowcost[MAX_VEX];
+                    // 初始化第一个权值为0，即v0加入生成树
+                    // lowcost的值为0，在这里就是此下标的顶点已经加入生成树
+                    lowcost[0] = 0;
+                    // 初始化第一个顶点下标为0
+                    adjvex[0] = 0;
+                    for (i = 1; i < G.numVertexes; i++)
+                    {
+                        // 将v0顶点与之有边的权值存入数组
+                        lowcost[i] = G.arc[0][i];
+                        // 初始化都为v0的下标
+                        adjvex[i] = 0;
+                    }
+                    for (i = 1; i < G.numVertexes; i++)
+                    {
+                        // 初始化最小权值为∞
+                        // 通常设置为不可能的大数字，如32767、65535等
+                        min = INFINITY;
+                        // j用来做顶点下标循环的变量
+                        j = 1;
+                        // k用来保存最小权值的顶点下标
+                        k = 0;
+                        // 循环全部顶点，找到与当前顶点相连权值最小的那条边
+                        while (j < G.numVertexes)
+                        {
+                            // 如果权值不为0并且权值小于min
+                            // lowcost[j]!=0表示已经是生成树的顶点不参与最小权值的查找
+                            if ((lowcost[j] != 0) && (lowcost[j] < min))
+                            {
+                                // 则让当前权值成为最小值
+                                min = lowcost[j];
+                                // 将当前最小值的小标存入k
+                                k = j;
+                            }
+                            j++;
+                        }
+                        // 打印当前顶点边中权值最小的边
+                        printf("(%d, %d)", adjvex[k], k);
+                        // 将当前顶点的权值设置为0，表示此顶点已经完成任务
+                        lowcost[k] = 0;
+                        // 循环所有顶点
+                        for (j = 1; j < G.numVertexes; j++)
+                        {
+                            // 若下标为k顶点各边权值小于此前这些顶点未被加入生成树时的权值
+                            if ((lowcost[j] != 0) && (G.arc[k][j] < lowcost[j]))
+                            {
+                                // 将较小权值存入lowcost
+                                low[j] = G.arc[k][j];
+                                // 将下标为k的顶点存入adjvex
+                                adjvex[j] = k;
+                            }
+                        }
+                    }
+                }
+            ```
+            假设N={P, {E}}是连通网，TE是N上最小生成树种边的集合。算法从U={u0}(u0∈V)，TE={}开始。重复执行下述操作：在所有u∈U，v属于V-U的边(u, v)属于E中找一条代价最小的边(u0, v0)并入集合TE，同时v0并入u，直至U=V为止。此时TE中必有n-1条边，则T={V, {TE}}为N的最小生成树。
+            有代码中的循环嵌套可知此算法的时间复杂度为O(n²)(这个其实只是基本实现最小生成树的构建，还可以优化)。
+            b.克鲁斯卡尔(Kruskal)算法：
+        (5)
+        (6)
+        (7)
     11、
     12、
     13、

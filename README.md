@@ -1974,7 +1974,7 @@
             ```
             h.DFS和BFS的时间复杂度是一样的，不同之处仅在于对顶点访问的顺序不同。深度优先更适合目标比较明确，以找到目标为主要目的的情况，而广度优先更适合在不断扩大遍历范围时找到相对最优解的情况。
         (4)最小生成树：把构造连通网的最小代价生成树称为最小生成树(Minimum Cost Spanning Tree)。找连通网的最小生成树，经典的有两种算法，普里姆算法和克鲁斯卡尔算法。
-            a.普里姆(Prim)算法：
+            a.普里姆(Prim)算法(数学描述看百科)：
             ```c
                 /* Prim算法生成最小生成树 */
                 void MiniSpanTree_Prim(MGraph G)
@@ -2038,12 +2038,193 @@
                     }
                 }
             ```
-            假设N={P, {E}}是连通网，TE是N上最小生成树种边的集合。算法从U={u0}(u0∈V)，TE={}开始。重复执行下述操作：在所有u∈U，v属于V-U的边(u, v)属于E中找一条代价最小的边(u0, v0)并入集合TE，同时v0并入u，直至U=V为止。此时TE中必有n-1条边，则T={V, {TE}}为N的最小生成树。
-            有代码中的循环嵌套可知此算法的时间复杂度为O(n²)(这个其实只是基本实现最小生成树的构建，还可以优化)。
-            b.克鲁斯卡尔(Kruskal)算法：
-        (5)
-        (6)
-        (7)
+            由代码中的循环嵌套可知此算法的时间复杂度为O(n²)(这个其实只是基本实现最小生成树的构建，还可以优化)。
+            b.克鲁斯卡尔(Kruskal)算法(数学描述看百科)：直接以边为目标去构建，只不过构建时要考虑是否会形成环路。此时需要使用图的存储结构中的边集数组结构。
+            edge边集数据结构定义:
+            ```c
+                /* 对边集数组Edge结构的定义 */
+                typedef struct
+                {
+                    int begin;
+                    int end;
+                    int weight;
+                }
+            ```
+            于是算法代码如下：
+            ```c
+                /* Kruskal算法生成最小生成树 */
+                void MiniSpanTree_Kruskal(MGraph G)
+                {
+                    int i, n, m;
+                    // 定义边集数组
+                    Edge edges[MAX_EDE];
+                    // 定义一个数组用来判断边与边是否形成环路
+                    int parent[MAX_VEX];
+                    // ...
+                    // 此处省略了将邻接矩阵G转化为边集数组edges并按权由小到大排序的代码(实现见后面具体的代码文件)
+                    // ...、
+                    for (i = 0; i < G.numVertexes; i++)
+                    {
+                        // 初始化数组为0
+                        parent[i] = 0;
+                    }
+                    // 循环每一条边
+                    for (i = 0; i < G.numEdges; i++)
+                    {
+                        n = Find(parent, edges[i].begin);
+                        m = Find(parent, edges[i].end);
+                        // 加入n和m不等，说明此边没有与现有生成树形成环路
+                        if (n != m)
+                        {
+                            // 就此边的结尾顶点放入下标为起点的parent中，表示此顶点已经在生成树集合中
+                            parent[n] = m;
+                            printf("(%d, %d) %d", edges[i].begin, edges[i].end, edges[i].weight);
+                        }
+                    }
+                }
+                /* 查找连线顶点的尾部下标 */
+                int Find(int *parent, int f)
+                {
+                    while (parent[f] > 0)
+                    {
+                        f = parent[f];
+                    }
+                    return f;
+                }
+            ```
+            对比两个算法，Kruskal算法主要针对边来展开，边数少时效率会非常高，所以对于稀疏图有很多优势；而Prim算法对于稠密图，即边数很多的情况会更好一些。
+        (5)最短路径：在网图和非网图中，最短路径的含义是不同的。由于非网图没有边上的权值，所谓的最短路径，其实就是两顶点之间经过的边数最少的路径；而对于网图来说，最短路径，是指两顶点之间经过的边上权值之和最少的路径，并且我们成路径上的第一个顶点是源点，最后一个顶点是终点。显然，研究网图更有实际意义，就地图而言，距离就是两顶点之间的权值之和。而非网图可以理解为所有边的权值都为1的网。
+        (6)第一种求最短路径的算法：从某个源点到其余各顶点的最短路径问题。
+            迪杰斯特拉(Dijkstra)算法：
+            ```c
+                #define MAX_VEX 9
+                #define INFINITY 65535
+                /* 用于存储最短路径下标的数组 */
+                typedef int Pathmatirx[MAX_VEX];
+                /* 用于存储到各点最短路径的权值和 */
+                typedef int ShortPathTable[MAX_VEX];
+                /* Dijkstra算法，求有向网G的v0顶点到其余各顶点v最短路径P[v]及带权长度D[v] */
+                /* P[v]的值为前驱顶点下标，D[v]表示v0到v的最短路径长度和 */
+                void ShortestPath_Dijkstra(MGraph G, int v0, Pathmatirx *P, ShortPathTable *D)
+                {
+                    int v, w, k, min;
+                    // final[w] = 1表示求得顶点v0至vw的最短路径
+                    int final[MAX_VEX];
+                    // 初始化数据
+                    for (v = 0; v < G.numVertexes; v++)
+                    {
+                        // 全部顶点初始化为未知最短路径的状态
+                        final[v] = 0;
+                        // 将与v0点(v0=0)有连线的顶点加上权值
+                        (*D)[v] = G.matirx[v0][v];
+                        // 初始化路径数组P为0
+                        (*P)[v] = 0;
+                    }
+                    // v0至v0路径为0
+                    (*D)[v0] = 0;
+                    // v0至v0不需要求路径
+                    final[v0] = 1;
+                    // 开始主循环，每次求得v0到某个v顶点的最短路径
+                    for (v = 1; v < G.numVertexes; v++)
+                    {
+                        // 当前所知离v0顶点的最近距离
+                        min = INFINITY;
+                        // 寻找离v0最近的顶点
+                        for (w = 0; w < G.numVertexes; w++)
+                        {
+                            if (!final[w] && ((*D)[w] < min))
+                            {
+                                k = w;
+                                // w顶点离v0顶点更近
+                                min = (*D)[w];
+                            }
+                        }
+                        // 将目前找到的最近的顶点置为1
+                        final[k] = 1;
+                        // 修正当前最短路径及距离
+                        for (w = 0; w < G.numVertexes; w++)
+                        {
+                            // 如果经过v顶点的路径比现在这条路径的长度短的话
+                            if (!final[w] && (min + G.matirx[k][w] < (*D)[w]))
+                            {
+                                // 说明找到了更短的路径，修改D[w]和P[w]
+                                // 修改当前路径长度
+                                (*D)[w] = min + G.matirx[k][w];
+                                (*P)[w] = k;
+                            }
+                        }
+                    }
+                }
+            ```
+            该算法可以求得v0到其余任何一个顶点得最短路径，时间复杂度为O(n²)，若要求任意两点之间得最短路径，相当于就是把每个点都当作源点v0来进行一次Dijkstra算法，时间复杂度为O(n³)。
+        (7)另一种求最短路径的算法：弗洛伊德(Floyd)算法，该算法求所有顶点到所有顶点的时间复杂度也是O(n³)，但是该算法非常简洁优雅。
+        注意：因为是求所有顶点到所有顶点的最短路径，因此Pathmatirx和ShortPathTable都是二维数组。
+        ```c
+            typedef int Pathmatirx[MAX_VEX][MAX_VEX];
+            typedef int ShortPathTable[MAX_VEX][MAX_VEX];
+            /* Floyd算法，求网图G中各顶点v到其余顶点w最短路径P[v][w]及带权长度D[v][w] */
+            void ShortestPath_Floyd(MGraph G, Pathmatirx *p, ShortPathTable *D)
+            {
+                int v, w, k;
+                // 初始化D和P
+                for (v = 0; v < G.numVertexes; v++)
+                {
+                    for (w = 0; w < G.numVertexes; w++)
+                    {
+                        // D[v][w]值即为对应点间的权值
+                        (*D)[v][w] = G.matirx[v][w];
+                        // 初始化P
+                        (*P)[v][w] = w;
+                    }
+                }
+                // k代表中转顶点的下标
+                // 比如，k=0就是说所有顶点都进过v0中专计算是否有最短路径的变化
+                for (k = 0; k < G.numVertexes; k++)
+                {
+                    // v代表起始顶点
+                    for (v = 0; v < G.nunmVertexes; v++)
+                    {
+                        // w代表结束顶点
+                        for (w = 0; w < G.numVertexes; w++)
+                        {
+                            // 如果经过下标为k的顶点的路径比原两点间的路径更短
+                            if ((*D)[v][w] > ((*D)[v][k] + (*D)[k][w]))
+                            {
+                                // 将当前两点间权值设为更小的一个
+                                (*D)[v][w] = (*D)[v][k] + (*D)[k][w];
+                                // 路径设置经过下标为k的顶点
+                                (*P)[v][w] = (*P)[v][k];
+                            }
+                        }
+                    }
+                }
+            }
+            /* 利用上述算法将求得的最短路径打印出来 */
+            for (v = 0; v < G.numVertexes; v++)
+            {
+                for (w = v + 1; w < G.numVertexes; w++)
+                {
+                    printf("v%d->v%d weight：%d ", v, w, D[v][w]);
+                    // 获得第一个路径顶点下标
+                    k = P[v][w];
+                    // 打印源点
+                    printf(" path：%d", v);
+                    // 如果路径顶点下标不是终点
+                    while (k != w)
+                    {
+                        // 打印路径顶点
+                        printf(" -> %d", k);
+                        // 获得下一个路径顶点下标
+                        k = P[k][w];
+                    }
+                    // 打印终点
+                    printf(" -> %d\n", w);
+                }
+                printf("\n);
+            }
+        ```
+        (8)拓扑排序：
+        (9)
     11、
     12、
     13、

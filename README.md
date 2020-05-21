@@ -2223,7 +2223,104 @@
                 printf("\n);
             }
         ```
-        (8)拓扑排序：
+        (8)拓扑排序：研究没有环的图
+            a.在一个表示工程的有向图中，用顶点表示活动，用弧表示活动之间的优先关系，这样的有向图为顶点表示活动的网，我们称为AOV网(Activity On Vertex Network)。
+            b.设G = {V, E}是一个具有n个顶点的有向图，V中的顶点序列v1，v2，...，vn，满足若从顶点vi到vj有一条路径，则在顶点序列中顶点vi必在顶点vj之前。则我们称这样的顶点序列为一个拓扑序列。
+            c.所谓拓扑排序，其实就是对一个有向图构造拓扑序列的过程。
+                构造时会有两个结果：
+                    如果此网的全部顶点被输出，则说明它是不存在环(回路)的AOV网；
+                    如果输出顶点数少了，哪怕是少了一个，也说明这个网存在环(回路)，不是AOV网。
+            d.拓扑排序算法：
+                基本思路：从AOV网中选择一个入度为0的顶点输出，然后删去此顶点，并删除以此顶点为尾的弧，继续重复此步骤，直到输出全部顶点或者AOV网中不存在入度为0的顶点为止。
+                涉及的结构代码：
+                ```c
+                    /* 边表结点 */
+                    typedef struct EdgeNode
+                    {
+                        /* 邻接点域，存储该顶点对应的下标 */
+                        int adjvex;
+                        /* 用于存储权值，对于非网图可以不需要 */
+                        int weight;
+                        /* 链域，指向下一个邻接点 */
+                        struct EdgeNode *next;
+                    } EdgeNode;
+
+                    /* 顶点表结构 */
+                    typedef struct VertexNode
+                    {
+                        /* 顶点入度 */
+                        int in;
+                        /* 顶点域，存储顶点信息 */
+                        int data;
+                        /* 边表头指针 */
+                        EdgeNode *firstedge;
+                    } VertexesNode, AdjList[MAX_VEX];
+
+                    typedef struct
+                    {
+                        AdjList adjList;
+                        /* 图中当前顶点数和边数 */
+                        int numVertexes, numEdges;
+                    } graphAdjList, *GraphAdjList;
+                ```
+                在算法中，还需要一个辅助数据结构--栈，用来存储处理过程中入度为0的顶点，目的是为了避免每个查找时都要去遍历顶点表找有没有入度为0的顶点。
+                实现代码：
+                ```c
+                    /* 拓扑排序，若GL无回路，则输出拓扑排序序列并返回OK，若有回路返回ERROR */
+                    Status ToplogicalSort(GraphAdjList GL)
+                    {
+                        EdgeNode *e;
+                        int i, k, gettop;
+                        // 用于栈指针下标
+                        int top = -1;
+                        // 用于统计输出顶点的个数
+                        int count = 0;
+                        // 建栈存储入度为0的顶点
+                        int *stack;
+                        stack = (int *)malloc(GL->numVertexs * sizeof(int));
+                        for (i = 0; i < GL->numVertexes; i++)
+                        {
+                            if (GL->adjList[i].in == 0)
+                            {
+                                // 将入度为0的顶点入栈
+                                // 这里从1开始存起走是因为下面while的结束条件是为0，如果从0开始存，那下面的while条件就改为-1
+                                stack[++top] = i;
+                            }
+                        }
+                        while (top != 0)
+                        {
+                            // 出栈
+                            gettop = stack[top--];
+                            // 打印此顶点
+                            printf("%d -> ", GL->adjList[i].data);
+                            // 统计输出顶点数
+                            count++;
+                            // 对此顶点弧表遍历
+                            for (e = GL->adjList[gettop].firstedge; e; e = e->next)
+                            {
+                                k = e->adjvex;
+                                // 将k号顶点邻接点的入度减一
+                                if (!(--GL->adjList[k].in))
+                                {
+                                    // 若为0则入栈，以便于下次循环输出
+                                    stack[++top] = k;
+                                }
+                            }
+                        }
+                        // 如果count小于顶点数，说明存在环
+                        if (vount < GL->numVertexes)
+                        {
+                            return ERROR;
+                        }
+                        else
+                        {
+                            return OK;
+                        }
+                    }
+                ```
+                算法时间复杂度为O(n+e)。
+            e.
+            f.
         (9)
     11、
     12、

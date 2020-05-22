@@ -2231,6 +2231,7 @@
                     如果此网的全部顶点被输出，则说明它是不存在环(回路)的AOV网；
                     如果输出顶点数少了，哪怕是少了一个，也说明这个网存在环(回路)，不是AOV网。
             d.拓扑排序算法：
+                主要是为了解决一个工程问题能否顺利进行的问题。
                 基本思路：从AOV网中选择一个入度为0的顶点输出，然后删去此顶点，并删除以此顶点为尾的弧，继续重复此步骤，直到输出全部顶点或者AOV网中不存在入度为0的顶点为止。
                 涉及的结构代码：
                 ```c
@@ -2318,13 +2319,154 @@
                         }
                     }
                 ```
-                算法时间复杂度为O(n+e)。
-            e.
-            f.
-        (9)
-    11、
-    12、
-    13、
-    14、
-    15、
+                对一个具有n个顶点e条弧的AOV网来说，算法时间复杂度为O(n+e)。
+            e.关键路径：
+                解决工程完成需要的最短时间问题。
+                在一个表示工程的带权有向图中，用顶点表示事件，用有向边表示活动，用边上的权值表示活动的持续时间，这种有向图的边表示活动的网，我们称之为AOE网(Activity On Edge Network)。
+                把AOE网中没有入边的顶点称为始点或源点，没有出边的顶点称为终点或汇点。一个工程，总有一个开始和结束，所以正常情况下，AOE网只有一个源点和一个汇点。
+                把路径上各个活动所持续的时间之和称为路径长度，从源点到汇点具有最大长度的路径叫关键路径，在关键路径上的活动称为关键活动。
+            f.关键路径算法原理：只需要找到所有活动的最早开始时间和最晚开始时间，并且比较它们，如果相等就意味着此活动是关键活动，活动间的路径为关键路径。如果不等，则就不是。
+            为此，我们需要定义如下几个参数：
+                I.事件的最早发生时间etv(earliest time of vertex)：即顶点vk鞥都最早发生时间；
+                II.事件的最晚发生时间ltv(latest time of vertex)：即顶点vk的最晚发生时间，也就是每个顶点对应的事件最晚需要开始的时间，超出此事件将会延误整个工期；
+                III.活动的最早开工时间ete(earliest time of edge)：即弧ak的最早发生时间
+                IV.活动的最晚开工时间lte(latest time of edge)：即弧ak的最晚发生时间，也就是不推迟工期的最晚开工时间。
+            我们是由I和II可以求得III和IV，然后再根据ete[k]是否与lte[k]相等来判断ak是否是关键活动。
+            g.关键路径算法：
+            求事件的最早发生时间etv的过程，就是我们从头至尾找拓扑序列的过程，因此，在求关键路径之前，需要先调用一次拓扑序列算法的代码来计算etv和拓扑序列列表。
+            首先定义几个全局变量：
+            ```c
+                /* 事件最早发生时间和最迟发生时间数组 */
+                int *etv, *ltv;
+                /* 用于存储拓扑序列的栈，以便后面求关键路径时使用 */
+                int *stack2;
+                int top2;
+            ```
+            以下是改进过的求拓扑序列算法：
+            ```c
+                /* 拓扑排序，用于关键路径计算 */
+                Status TopologicSort(GraphAdjList GL)
+                {
+                    EdgeNode *e;
+                    int i, k, gettop;
+                    /* 用于栈指针下标 */
+                    int top = -1;
+                    /* 用于统计输出顶点的个数 */
+                    int count = 0;
+                    /* 建栈将入度为0的顶点入栈 */
+                    int *stack;
+                    stack = (int *) malloc(GL->numVertexes * sizeof(int));
+                    for (i = 0; i < GL->numVertexes; i++)
+                    {
+                        if (0 == GL->adjList[i].in)
+                        {
+                            stack[++top] = i;
+                        }
+                    }
+                    // 初始化为0 
+                    top2 = 0;
+                    // 事件最早发生事件
+                    etv = (int *) malloc(GL->numVertexes * sizeof(int));
+                    for (i= 0; i < GL->numVertexes; i++)
+                    {
+                        // 初始化为0
+                        etv[i] = 0;
+                    }
+                    stack2 = (int *) malloc(GL->numVertexes * sizeof(int));
+                    while (top != 0)
+                    {
+                        gettop = stack[top--];
+                        count++;
+                        // 将弹出的顶点序号压入拓扑序列的栈
+                        stack2[++top2] = gettop;
+                        for (e = GL->adjList[gettop].firstedge; e; e = e->next)
+                        {
+                            k = e->adjvex;
+                            if (!(--GL->adjList[k].in))
+                            {
+                                stack[++top] = k;
+                            }
+                            // 求各顶点事件最早发生时间值
+                            if ((etv[gettop] + e->weight) > etv[k])
+                            {
+                                etv[k] = etv[gettop] + e->weight;
+                            }
+                        }
+                    }
+                    if (count < GL->numVertexes)
+                    {
+                        return ERROR;
+                    }
+                    else
+                    {
+                        return OK;
+                    }
+                }
+            ```
+            可以得出计算顶点vk即求etv[k]的最早发生时间公式：
+            etv[k] = 
+                0，当k=0时
+                max{etv[k] + len<vi, vk>}，当k≠0且<vi, vk>∈P[k]时，其中P[k]表示所有到达顶点vk的弧的集合，len<vi, vk>是弧<vi, vk>上的权值
+            下面是求关键路径的算法代码：
+            ```c
+                /* 求关键路径，GL为有向网，输出GL的各项关键活动 */
+                void CriticalPath(GraphAdjList GL)
+                {
+                    EdgeNode *e;
+                    int i, gettop, k, j;
+                    // 声明活动最早发生时间和最迟发生时间变量
+                    int ete, lte;
+                    // 求拓扑序列，计算数组etv和stack2的值
+                    TopologicalSort(GL);
+                    // 事件最晚发生时间
+                    ltv = (int *) malloc(GL->numVertexes * sizeof(int));
+                    for (i = 0; i < GL->numVertexes; i++)
+                    {
+                        // 初始化ltv
+                        ltv[i] = etv[GL->numVertexes - 1];
+                    }
+                    // 计算ltv
+                    while (top2 != 0)
+                    {
+                        // 将拓扑序列出栈，后进先出
+                        gettop = stack2[top2--];
+                        for (e = GL->adjList[gettop].firstedge; e; e = e->next)
+                        {
+                            // 求各顶点时间的最迟发生时间ltv值
+                            k = e->adjvex;
+                            if ((ltv[k] - e->weight) < ltv[gettop])
+                            {
+                                ltv[gettop] = ltv - e->weight;
+                            }
+                        }
+                    }
+                    // 求ete，lte和关键活动
+                    for (j = 0; j < GL->numVertexes; j++)
+                    {
+                        for (e = GL->adjList[j].firstedge; e; e = e->next)
+                        {
+                            k = e->adjvex;
+                            // 活动最早发生时间
+                            ete = etv[j];
+                            // 活动最迟发生时间
+                            lte = ltv[k] - e->weight;
+                            // 如果两者相等即在关键路径上
+                            if (ete == lte)
+                            {
+                                printf("<v%d, v%d> length：%d , ", GL->adjList[j].data, GL->adjList[k].data, e->weight);
+                            }
+                        }
+                    }
+                }
+            ```
+            在计算ltv时，其实是把拓扑序列倒过来进行的。计算顶点vk即求ltv[k]的最晚发生时间的公式是：
+            ltv[k] = 
+                etv[k]，当k=n-1时
+                min{ltv[j] + len<vk, vj>}，当k < n-1且<vk, vj>∈S[k]时，其中S[k]表示所有从顶点vk出发的弧的集合，len<vk, vj>是弧<vk, vj>上的权值
 ## 七、查找
+    1、
+    2、
+    3、
+    4、
+    5、
+## 八、拍序

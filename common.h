@@ -21,6 +21,10 @@ typedef int QElemType;
 typedef int TElemType;
 // 链式存储树结点的数据类型，目前暂定为字符型
 typedef char TLElemType;
+// 图的顶点类型应由用户定义
+typedef char VertexType;
+// 图的边上的权值类型应由用户定义
+typedef int EdgeType;
 
 /* 数据元素类型定义 end */
 

@@ -2100,12 +2100,12 @@
                 #define MAX_VEX 9
                 #define INFINITY 65535
                 /* 用于存储最短路径下标的数组 */
-                typedef int Pathmatirx[MAX_VEX];
+                typedef int Pathmatrix[MAX_VEX];
                 /* 用于存储到各点最短路径的权值和 */
                 typedef int ShortPathTable[MAX_VEX];
                 /* Dijkstra算法，求有向网G的v0顶点到其余各顶点v最短路径P[v]及带权长度D[v] */
                 /* P[v]的值为前驱顶点下标，D[v]表示v0到v的最短路径长度和 */
-                void ShortestPath_Dijkstra(MGraph G, int v0, Pathmatirx *P, ShortPathTable *D)
+                void ShortestPath_Dijkstra(MGraph G, int v0, Pathmatrix *P, ShortPathTable *D)
                 {
                     int v, w, k, min;
                     // final[w] = 1表示求得顶点v0至vw的最短路径
@@ -2116,7 +2116,7 @@
                         // 全部顶点初始化为未知最短路径的状态
                         final[v] = 0;
                         // 将与v0点(v0=0)有连线的顶点加上权值
-                        (*D)[v] = G.matirx[v0][v];
+                        (*D)[v] = G.matrix[v0][v];
                         // 初始化路径数组P为0
                         (*P)[v] = 0;
                     }
@@ -2145,11 +2145,11 @@
                         for (w = 0; w < G.numVertexes; w++)
                         {
                             // 如果经过v顶点的路径比现在这条路径的长度短的话
-                            if (!final[w] && (min + G.matirx[k][w] < (*D)[w]))
+                            if (!final[w] && (min + G.matrix[k][w] < (*D)[w]))
                             {
                                 // 说明找到了更短的路径，修改D[w]和P[w]
                                 // 修改当前路径长度
-                                (*D)[w] = min + G.matirx[k][w];
+                                (*D)[w] = min + G.matrix[k][w];
                                 (*P)[w] = k;
                             }
                         }
@@ -2158,12 +2158,12 @@
             ```
             该算法可以求得v0到其余任何一个顶点得最短路径，时间复杂度为O(n²)，若要求任意两点之间得最短路径，相当于就是把每个点都当作源点v0来进行一次Dijkstra算法，时间复杂度为O(n³)。
         (7)另一种求最短路径的算法：弗洛伊德(Floyd)算法，该算法求所有顶点到所有顶点的时间复杂度也是O(n³)，但是该算法非常简洁优雅。
-        注意：因为是求所有顶点到所有顶点的最短路径，因此Pathmatirx和ShortPathTable都是二维数组。
+        注意：因为是求所有顶点到所有顶点的最短路径，因此Pathmatrix和ShortPathTable都是二维数组。
         ```c
-            typedef int Pathmatirx[MAX_VEX][MAX_VEX];
+            typedef int Pathmatrix[MAX_VEX][MAX_VEX];
             typedef int ShortPathTable[MAX_VEX][MAX_VEX];
             /* Floyd算法，求网图G中各顶点v到其余顶点w最短路径P[v][w]及带权长度D[v][w] */
-            void ShortestPath_Floyd(MGraph G, Pathmatirx *p, ShortPathTable *D)
+            void ShortestPath_Floyd(MGraph G, Pathmatrix *p, ShortPathTable *D)
             {
                 int v, w, k;
                 // 初始化D和P
@@ -2172,7 +2172,7 @@
                     for (w = 0; w < G.numVertexes; w++)
                     {
                         // D[v][w]值即为对应点间的权值
-                        (*D)[v][w] = G.matirx[v][w];
+                        (*D)[v][w] = G.matrix[v][w];
                         // 初始化P
                         (*P)[v][w] = w;
                     }

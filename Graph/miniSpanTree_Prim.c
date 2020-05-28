@@ -11,7 +11,7 @@ typedef int Status;
 typedef struct
 {
     /* 邻接矩阵，可看作边表 */
-    EdgeType arc[MAX_VEX][MAX_VEX];
+    int arc[MAX_VEX][MAX_VEX];
     /* 图中当前的顶点数和边数 */
     int numVertexes, numEdges;
 } MGraph;

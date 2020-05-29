@@ -2273,7 +2273,7 @@
                         EdgeNode *e;
                         int i, k, gettop;
                         // 用于栈指针下标
-                        int top = -1;
+                        int top = 0;
                         // 用于统计输出顶点的个数
                         int count = 0;
                         // 建栈存储入度为0的顶点
@@ -2350,7 +2350,7 @@
                     EdgeNode *e;
                     int i, k, gettop;
                     /* 用于栈指针下标 */
-                    int top = -1;
+                    int top = 0;
                     /* 用于统计输出顶点的个数 */
                     int count = 0;
                     /* 建栈将入度为0的顶点入栈 */

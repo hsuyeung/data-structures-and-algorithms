@@ -140,7 +140,7 @@ Status TopologicalSort(GraphAdjList ALG)
     EdgeNode *e;
     int i, k, gettop;
     // 用于栈指针下标
-    int top = -1;
+    int top = 0;
     // 用于统计输出顶点的个数
     int count = 0;
     // 建栈将入度为0的顶点入栈
@@ -155,7 +155,7 @@ Status TopologicalSort(GraphAdjList ALG)
             stack[++top] = i;
         }
     }
-    while (top != -1)
+    while (top != 0)
     {
         gettop = stack[top--];
         printf("%d -> ", ALG->adjList[gettop].data);

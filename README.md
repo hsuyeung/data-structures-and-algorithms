@@ -2889,9 +2889,9 @@
                         }
                         Lr->bf = EH;
                         // 对T的左子树作左旋平衡处理
-                        L-Rotate(&(*T)->lchild);
+                        L_Rotate(&(*T)->lchild);
                         // 对T作右旋平衡处理
-                        R-Rotate(T);
+                        R_Rotate(T);
                         break;
                 }
             }

@@ -111,6 +111,5 @@ int main()
         SearchHash(H, key, &p);
         printf("查找 %d 的地址为：%d \n", key, p);
     }
-
     return 0;
 }

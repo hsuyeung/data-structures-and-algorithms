@@ -1,5 +1,5 @@
 # DataStructuresAndAlgorithms
-自学数据结构与算法的笔记
+[自学数据结构与算法的笔记](https://www.hsuyeung.com/article/data-structure-and-algorithms-study-notes)
 
 # 笔记
 ## 使用教材：《大话数据结构》

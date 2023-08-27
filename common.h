@@ -1,6 +1,6 @@
 /* 一些公共常量的定义 */
 #ifndef COMMON
-#define COMMOM
+#define COMMON
 
 /* 状态常量定义 start */
 #define OK 1
